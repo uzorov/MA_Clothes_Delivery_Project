@@ -1,33 +1,33 @@
 version: '3'
 
 services:
-  postgres-delivery:
-    image: postgres:latest
-    environment:
-      POSTGRES_DB: delivery
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - app
-
-  postgres-printing:
-    image: postgres:latest
-    environment:
-      POSTGRES_DB: printing
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_PORT: 5433  # Порт базы данных внутри контейнера
-    command: ["-p", "5433"]
-    ports:
-      - "5433:5433"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - app
+#  postgres-delivery:
+#    image: postgres:latest
+#    environment:
+#      POSTGRES_DB: delivery
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: password
+#    ports:
+#      - "5432:5432"
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+#    networks:
+#      - app
+#
+#  postgres-printing:
+#    image: postgres:latest
+#    environment:
+#      POSTGRES_DB: printing
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: password
+#      POSTGRES_PORT: 5433  # Порт базы данных внутри контейнера
+#    command: ["-p", "5433"]
+#    ports:
+#      - "5433:5433"
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+#    networks:
+#      - app
 
   rabbitmq:
     image: "rabbitmq:management"
@@ -47,7 +47,7 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - postgres-delivery
+      # - postgres-delivery
       - rabbitmq
     labels:
       logging: "promtail"
@@ -62,7 +62,22 @@ services:
     ports:
       - "81:81"
     depends_on:
-      - postgres-printing
+      # - postgres-printing
+      - rabbitmq
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
+    networks:
+      - app
+
+  app_payment:
+    build:
+      context: .
+      dockerfile: /app_payment/Dockerfile
+    ports:
+      - "82:82"
+    depends_on:
+      # - postgres-payment
       - rabbitmq
     labels:
       logging: "promtail"
