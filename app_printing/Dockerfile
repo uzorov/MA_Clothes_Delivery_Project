@@ -15,4 +15,6 @@ COPY .env /app_printing
 COPY ./app_printing/migration /app_printing/migration
 COPY ./app_printing/alembic.ini /app_printing/alembic.ini
 
+EXPOSE 81
+
 CMD ["/bin/sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 81"]

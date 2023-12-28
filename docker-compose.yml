@@ -29,16 +29,16 @@ services:
 #    networks:
 #      - app
 
-  rabbitmq:
-    image: "rabbitmq:management"
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    networks:
-      - app
+#  rabbitmq:
+#    image: "rabbitmq:management"
+#    environment:
+#      RABBITMQ_DEFAULT_USER: guest
+#      RABBITMQ_DEFAULT_PASS: guest
+#    ports:
+#      - "5672:5672"
+#      - "15672:15672"
+#    networks:
+#      - app
 
   app_delivery:
     build:
@@ -46,9 +46,9 @@ services:
       dockerfile: /app_delivery/Dockerfile
     ports:
       - "80:80"
-    depends_on:
+    # depends_on:
       # - postgres-delivery
-      - rabbitmq
+      # - rabbitmq
     labels:
       logging: "promtail"
       logging_jobname: "containerlogs"
@@ -61,9 +61,9 @@ services:
       dockerfile: /app_printing/Dockerfile
     ports:
       - "81:81"
-    depends_on:
+    # depends_on:
       # - postgres-printing
-      - rabbitmq
+      # - rabbitmq
     labels:
       logging: "promtail"
       logging_jobname: "containerlogs"
@@ -76,9 +76,54 @@ services:
       dockerfile: /app_payment/Dockerfile
     ports:
       - "82:82"
-    depends_on:
+    # depends_on:
       # - postgres-payment
-      - rabbitmq
+      # - rabbitmq
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
+    networks:
+      - app
+
+  app_design:
+    build:
+      context: .
+      dockerfile: /app_design/Dockerfile
+    ports:
+      - "83:83"
+    # depends_on:
+      # - postgres-design
+      # - rabbitmq
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
+    networks:
+      - app
+
+  app_order:
+    build:
+      context: .
+      dockerfile: /app_order/Dockerfile
+    ports:
+      - "84:84"
+    # depends_on:
+    # - postgres-order
+    # - rabbitmq
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
+    networks:
+      - app
+
+  app_promocode:
+    build:
+      context: .
+      dockerfile: /app_promocode/Dockerfile
+    ports:
+      - "85:85"
+    # depends_on:
+    # - postgres-promocode
+    # - rabbitmq
     labels:
       logging: "promtail"
       logging_jobname: "containerlogs"

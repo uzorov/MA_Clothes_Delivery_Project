@@ -15,6 +15,6 @@ COPY .env /app_payment
 COPY ./app_payment/migration /app_payment/migration
 COPY ./app_payment/alembic.ini /app_payment/alembic.ini
 
-EXPOSE 80
+EXPOSE 82
 
 CMD ["/bin/sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 82"]
