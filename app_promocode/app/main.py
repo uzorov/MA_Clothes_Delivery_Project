@@ -13,4 +13,4 @@ def startup():
     asyncio.ensure_future(rabbitmq.consume_tasks(loop))
 
 
-app.include_router(promocode_router)
+app.include_router(promocode_router, prefix='/api')

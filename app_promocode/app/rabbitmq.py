@@ -6,7 +6,7 @@ from aio_pika.abc import AbstractRobustConnection
 from aio_pika import connect_robust, IncomingMessage, Message
 from app.settings import settings
 from app.services.promocode_service import PromocodeService  # Импортируем ваш сервис управления задачами
-from app.repo.local_promocode_repo import PromocodeRepo 
+from app.repo.local_promocode_repo import PromocodeRepo
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -18,6 +18,7 @@ async def process_promocode(msg: IncomingMessage):
         await send_discount(data['discount'], data['id'])
     except:
         await msg.ack()
+
 
 async def send_discount(discount: float, id: UUID):
     print('Sending code')
@@ -32,12 +33,12 @@ async def send_discount(discount: float, id: UUID):
     await channel.close()
     await connection.close()
 
+
 async def consume_tasks(loop: AbstractEventLoop) -> AbstractRobustConnection:
     connection = await connect_robust(settings.amqp_url, loop=loop)
     channel = await connection.channel()
 
     task_created_queue = await channel.declare_queue('process_promocode_queue', durable=True)
-
 
     await task_created_queue.consume(process_promocode)
     print('Started RabbitMQ consuming for Task Management...')
