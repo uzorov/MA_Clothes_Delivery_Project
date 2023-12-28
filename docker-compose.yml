@@ -42,8 +42,8 @@ services:
 
   app_delivery:
     build:
-      context: /app_delivery
-      dockerfile: /Dockerfile
+      context: .
+      dockerfile: /app_delivery/Dockerfile
     ports:
       - "80:80"
     depends_on:
@@ -57,8 +57,8 @@ services:
 
   app_printing:
     build:
-      context: /app_printing
-      dockerfile: /Dockerfile
+      context: .
+      dockerfile: /app_printing/Dockerfile
     ports:
       - "81:81"
     depends_on:
@@ -71,7 +71,6 @@ services:
       - app
 
   pgadmin:
-    container_name: pgadmin
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: vkryazhevskikh@gmail.com

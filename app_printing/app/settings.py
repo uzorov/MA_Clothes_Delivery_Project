@@ -1,14 +1,24 @@
-# /app_printing/settings.py
+# /app_printing/app/settings.py
+from pathlib import Path
+import os
+from dotenv import load_dotenv
+from pydantic_settings import BaseSettings
 
-from pydantic_settings import BaseSettings, SettingsConfigDict
+# Определяем путь к .env файлу относительно расположения settings.py
+env_path = Path(__file__).resolve().parents[1] / ".env"
+load_dotenv(dotenv_path=env_path)
+
+print(f"Current working directory: {os.getcwd()}")
+print(f"Is .env file present: {os.path.isfile(env_path)}")
+print(f"env_path: {env_path}")
 
 
 class Settings(BaseSettings):
-    amqp_url: str = "amqp://guest:guest@actual_pr678-rabbitmq-1:5672/"
-    postgres_url: str = "postgresql://postgres:password@actual_pr678-postgres-printing-1:5433/printing"
-    # port: str = 81
+    amqp_url: str = os.getenv("AMQP_URL")
+    print(f"\n\n AMQP_URL: {amqp_url}\n\n")
 
-    # model_config = SettingsConfigDict(env_file=".env")
+    postgres_url: str = os.getenv("POSTGRES_URL_PRINTING")
+    print(f"\n\n POSTGRES_URL: {postgres_url}\n\n")
 
 
 settings = Settings()

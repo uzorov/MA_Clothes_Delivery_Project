@@ -4,15 +4,16 @@ FROM python:3.10
 WORKDIR /app_delivery
 
 # Установка зависимостей проекта
-COPY ./requirements.txt /app_delivery/
+COPY ./app_delivery/requirements.txt /app_delivery/
 RUN pip install --no-cache-dir --upgrade -r /app_delivery/requirements.txt
 
 # Перенос проекта в образ
-COPY ./app /app_delivery/app
+COPY ./app_delivery/app /app_delivery/app
+COPY .env /app_delivery
 
 # Копирование файлов alembic
-COPY ./migration /app_delivery/migration
-COPY ./alembic.ini /app_delivery/alembic.ini
+COPY ./app_delivery/migration /app_delivery/migration
+COPY ./app_delivery/alembic.ini /app_delivery/alembic.ini
 
 EXPOSE 80
 
