@@ -1,0 +1,168 @@
+version: '3'
+
+services:
+  postgres-delivery:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: delivery
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app
+
+  postgres-printing:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: printing
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_PORT: 5433  # Порт базы данных внутри контейнера
+    command: ["-p", "5433"]
+    ports:
+      - "5433:5433"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app
+
+  rabbitmq:
+    image: "rabbitmq:management"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - app
+
+  app_delivery:
+    build:
+      context: /app_delivery
+      dockerfile: /Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - postgres-delivery
+      - rabbitmq
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
+    networks:
+      - app
+
+  app_printing:
+    build:
+      context: /app_printing
+      dockerfile: /Dockerfile
+    ports:
+      - "81:81"
+    depends_on:
+      - postgres-printing
+      - rabbitmq
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
+    networks:
+      - app
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: vkryazhevskikh@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    networks:
+      - app
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0.1
+    volumes:
+      - ./realm-export.json:/opt/jboss/keycloak/imports/realm-export.json
+    ports:
+      - "8080:8080"
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    command:
+      - "start-dev"
+      - "-Dkeycloak.profile.feature.upload_scripts=enabled"
+      - "-Dkeycloak.migration.action=import"
+      - "-Dkeycloak.migration.provider=singleFile"
+      - "-Dkeycloak.migration.file=/opt/jboss/keycloak/imports/realm-export.json"
+    networks:
+      - app
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+#    networks:
+#      - app
+
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        mkdir -p /etc/grafana/provisioning/datasources
+        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+        apiVersion: 1
+        datasources:
+        - name: Loki
+          type: loki
+          access: proxy
+          orgId: 1
+          url: http://loki:3100
+          basicAuth: false
+          isDefault: true
+          version: 1
+          editable: false
+        EOF
+        /run.sh
+    ports:
+      - "3000:3000"
+#    networks:
+#      - app
+
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+#    networks:
+#      - app
+
+  promtail:
+    image: grafana/promtail:latest
+    volumes:
+      - ./config/promtail.yaml:/etc/promtail/docker-config.yaml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/docker-config.yaml
+    depends_on:
+      - loki
+#    networks:
+#      - app
+
+networks:
+  app:
+#    name: app
+
+volumes:
+  postgres_data:
