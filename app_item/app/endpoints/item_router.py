@@ -8,6 +8,33 @@ from enum import Enum
 import httpx
 
 
+from opentelemetry import trace
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.trace.export import ConsoleSpanExporter
+from opentelemetry.exporter.jaeger.thrift import JaegerExporter
+from opentelemetry.sdk.resources import SERVICE_NAME, Resource
+
+provider = TracerProvider()
+processor = BatchSpanProcessor(ConsoleSpanExporter())
+provider.add_span_processor(processor)
+trace.set_tracer_provider(
+  TracerProvider(
+    resource=Resource.create({SERVICE_NAME: "item-service"})
+  )
+)
+jaeger_exporter = JaegerExporter(
+  agent_host_name="localhost",
+  agent_port=6831,
+)
+trace.get_tracer_provider().add_span_processor(
+  BatchSpanProcessor(jaeger_exporter)
+)
+
+name='Item Service'
+tracer = trace.get_tracer(name)
+
 item_router = APIRouter(prefix='/item', tags=['Item'])
 target_service_url = "http://microservice-cart-1:80"
 
@@ -46,11 +73,12 @@ def create_item(
     name: str,
     price: float,
     item_service: ItemService = Depends(ItemService)) -> Item:
-    try:
-        item = item_service.create_item(name, price)
-        return item.dict()
-    except KeyError:
-        raise HTTPException(404, f'Cant create item')
+    with tracer.start_as_current_span("Create item"):
+        try:
+            item = item_service.create_item(name, price)
+            return item.dict()
+        except KeyError:
+            raise HTTPException(404, f'Cant create item')
 
 @item_router.post('/add_to_cart')
 async def add_to_cart(
@@ -59,10 +87,11 @@ async def add_to_cart(
     size: dropdownChoices = Form(dropdownChoices),
     item_service: ItemService = Depends(ItemService),
     cart_id: Optional[UUID] = None) -> Item:
-    try:
-        item = item_service.get_items_by_id(item_id)
-        data = {"id": item_id, "size": size, "count": count, "price": item.price, "name": item.name}
-        result = await make_request_to_target_service(data, cart_id)
-        return item
-    except KeyError:
-        raise HTTPException(404, f'Cant add to cart item')
+    with tracer.start_as_current_span("Add to cart"):
+        try:
+            item = item_service.get_items_by_id(item_id)
+            data = {"id": item_id, "size": size, "count": count, "price": item.price, "name": item.name}
+            result = await make_request_to_target_service(data, cart_id)
+            return item
+        except KeyError:
+            raise HTTPException(404, f'Cant add to cart item')

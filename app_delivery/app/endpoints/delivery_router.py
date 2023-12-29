@@ -6,6 +6,34 @@ from app.models.delivery import Delivery, CreateDeliveryRequest
 import prometheus_client
 from fastapi import Response
 
+from opentelemetry import trace
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.trace.export import ConsoleSpanExporter
+from opentelemetry.exporter.jaeger.thrift import JaegerExporter
+from opentelemetry.sdk.resources import SERVICE_NAME, Resource
+
+provider = TracerProvider()
+processor = BatchSpanProcessor(ConsoleSpanExporter())
+provider.add_span_processor(processor)
+trace.set_tracer_provider(
+  TracerProvider(
+    resource=Resource.create({SERVICE_NAME: "delivery-service"})
+  )
+)
+jaeger_exporter = JaegerExporter(
+  agent_host_name="localhost",
+  agent_port=6831,
+)
+trace.get_tracer_provider().add_span_processor(
+  BatchSpanProcessor(jaeger_exporter)
+)
+
+name='Delivery Service'
+tracer = trace.get_tracer(name)
+
+
 delivery_router = APIRouter(prefix='/delivery', tags=['Delivery'])
 metrics_router = APIRouter(tags=['Metrics'])
 
@@ -37,8 +65,9 @@ cancelled_delivery_count = prometheus_client.Counter(
 
 @delivery_router.get('/')
 def get_deliveries(delivery_service: DeliveryService = Depends(DeliveryService)) -> list[Delivery]:
-    get_deliveries_count.inc(1)
-    return delivery_service.get_deliveries()
+    with tracer.start_as_current_span("Get deliveries"):
+        get_deliveries_count.inc(1)
+        return delivery_service.get_deliveries()
 
 
 @delivery_router.post('/')
@@ -46,12 +75,13 @@ def add_delivery(
         delivery_info: CreateDeliveryRequest,
         delivery_service: DeliveryService = Depends(DeliveryService)
 ) -> Delivery:
-    try:
-        delivery = delivery_service.create_delivery(delivery_info.id)
-        created_delivery_count.inc(1)
-        return delivery.dict()
-    except KeyError:
-        raise HTTPException(400, f'Delivery with id={delivery_info.id} already exists')
+    with tracer.start_as_current_span("Add delivery"):
+        try:
+            delivery = delivery_service.create_delivery(delivery_info.id)
+            created_delivery_count.inc(1)
+            return delivery.dict()
+        except KeyError:
+            raise HTTPException(400, f'Delivery with id={delivery_info.id} already exists')
 
 
 @delivery_router.post('/{id}/activate')

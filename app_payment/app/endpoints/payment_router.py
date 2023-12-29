@@ -5,25 +5,40 @@ from app.models.create_payment_request import CreatePaymentRequest
 from app.services.payment_service import PaymentService
 from app.models.payment_model import Payment, PaymentType
 
-from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
 
-# Команда запуска бобра
-# docker run -d --name jaeger -e COLLECTOR_OTLP_ENABLED=true -e COLLECTOR_ZIPKIN_HOST_PORT=:9411 -p 6831:6831/udp -p 6832:6832/udp -p 5778:5778 -p 16686:16686 -p 14250:14250 -p 14268:14268 -p 14269:14269 -p 4317:4317 -p 4318:4318 -p 9411:9411 jaegertracing/all-in-one:next-release
-# opentelemetry-instrument --service_name payment.api uvicorn app.main:app
+from opentelemetry import trace
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.trace.export import ConsoleSpanExporter
+from opentelemetry.exporter.jaeger.thrift import JaegerExporter
+from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 
 provider = TracerProvider()
+processor = BatchSpanProcessor(ConsoleSpanExporter())
+provider.add_span_processor(processor)
+trace.set_tracer_provider(
+  TracerProvider(
+    resource=Resource.create({SERVICE_NAME: "payment-service"})
+  )
+)
+jaeger_exporter = JaegerExporter(
+  agent_host_name="localhost",
+  agent_port=6831,
+)
+trace.get_tracer_provider().add_span_processor(
+  BatchSpanProcessor(jaeger_exporter)
+)
 
-trace.set_tracer_provider(provider)
-
-tracer = trace.get_tracer(__name__)
+name='Payment Service'
+tracer = trace.get_tracer(name)
 
 payment_router = APIRouter(prefix='/payments', tags=['Payments'])
 
 
 @payment_router.get('/')
 def get_all_payments(payment_service: PaymentService = Depends(PaymentService)) -> list[Payment]:
-    with tracer.start_as_current_span("Get payments") as span:
+    with tracer.start_as_current_span("Get payments"):
         return payment_service.get_all_payments()
 
 
@@ -32,7 +47,7 @@ def create_payment(
         payment_info: CreatePaymentRequest,
         payment_service: PaymentService = Depends(PaymentService)
 ) -> Payment:
-    with tracer.start_as_current_span("Create payment") as span:
+    with tracer.start_as_current_span("Create payment"):
         try:
             payment = payment_service.create_payment(payment_info.receiver, payment_info.sum,
                                                      PaymentType(payment_info.type))
