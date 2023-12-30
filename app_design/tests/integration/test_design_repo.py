@@ -1,7 +1,7 @@
 import pytest
 from uuid import UUID
 from app.models.design_model import Design, DesignStatuses
-from app.repositories.design_repo import DesignRepo
+from app.repositories.db_design_repo import DesignRepo
 
 @pytest.fixture()
 def design_repo() -> DesignRepo:

@@ -21,7 +21,7 @@ def test_empty_carts(cart_repo: CartRepo) -> None:
 
 
 def test_create_cart(cart_repo: CartRepo, sample_item: dict) -> None:
-    cart = Cart(id=uuid4(), items=[sample_item], total=sample_item['price'] * sample_item['count'])
+    cart = Cart(id=uuid4(), items=[sample_item], total=sample_item['price'] * sample_item['count'],user_id=uuid4())
     created_cart = cart_repo.create_cart(cart)
     assert created_cart.id is not None
     assert created_cart.total == cart.total
@@ -29,12 +29,12 @@ def test_create_cart(cart_repo: CartRepo, sample_item: dict) -> None:
 
 def test_update_cart(cart_repo: CartRepo, sample_item: dict) -> None:
     # Create a cart with a sample item
-    initial_cart = Cart(id=uuid4(), items=[sample_item], total=sample_item['price'] * sample_item['count'])
+    initial_cart = Cart(id=uuid4(), items=[sample_item], total=sample_item['price'] * sample_item['count'],user_id=uuid4())
     created_cart = cart_repo.create_cart(initial_cart)
 
     # Update the cart with another item
     updated_item = {"id":'f9a88108-699d-49c3-bcc4-795409506e37', "name":"new Item", "price":101.0, "count":2, "size":'m'}
-    updated_cart = Cart(id=created_cart.id, items=[updated_item], total=updated_item['price'] * updated_item['count'] + initial_cart.total)
+    updated_cart = Cart(id=created_cart.id, items=[updated_item], total=updated_item['price'] * updated_item['count'] + initial_cart.total,user_id=created_cart.user_id)
 
     updated_cart = cart_repo.update_cart(updated_cart)
 
@@ -47,8 +47,8 @@ def test_get_carts(cart_repo: CartRepo, sample_item: dict) -> None:
     cart_repo.db.query(DBCart).delete()  # Clear the database before the test
 
     # Create two carts with sample items
-    first_cart = Cart(id=uuid4(), items=[sample_item], total=sample_item['price'] * sample_item['count'])
-    second_cart = Cart(id=uuid4(), items=[sample_item], total=sample_item['price'] * sample_item['count'])
+    first_cart = Cart(id=uuid4(), items=[sample_item], total=sample_item['price'] * sample_item['count'],user_id=uuid4())
+    second_cart = Cart(id=uuid4(), items=[sample_item], total=sample_item['price'] * sample_item['count'],user_id=uuid4())
 
     cart_repo.create_cart(first_cart)
     cart_repo.create_cart(second_cart)
@@ -65,7 +65,7 @@ def test_get_carts(cart_repo: CartRepo, sample_item: dict) -> None:
 
 def test_get_cart_by_id(cart_repo: CartRepo, sample_item: dict) -> None:
     # Create a cart with a sample item
-    initial_cart = Cart(id=uuid4(), items=[sample_item], total=sample_item['price'] * sample_item['count'])
+    initial_cart = Cart(id=uuid4(), items=[sample_item], total=sample_item['price'] * sample_item['count'],user_id=uuid4())
     created_cart = cart_repo.create_cart(initial_cart)
 
     retrieved_cart = cart_repo.get_cart(created_cart.id)

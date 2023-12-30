@@ -13,7 +13,8 @@ def sample_payment() -> Payment:
         id=uuid4(),
         receiver='John Doe',
         sum=100,
-        type=PaymentType.PC
+        type=PaymentType.PC,
+        user_id = uuid4()
     )
 
 

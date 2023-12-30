@@ -15,7 +15,8 @@ def payment_data() -> Payment:
         id=uuid4(),
         receiver='John Doe',
         sum=100,
-        type=PaymentType.PC
+        type=PaymentType.PC,
+        user_id=uuid4()
     )
 
 def test_empty_payments(payment_service: PaymentService) -> None:
@@ -25,7 +26,7 @@ def test_create_payment(
         payment_data: Payment,
         payment_service: PaymentService
 ) -> None:
-    payment = payment_service.create_payment(payment_data.receiver, payment_data.sum, payment_data.type)
+    payment = payment_service.create_payment(payment_data.receiver, payment_data.sum, payment_data.type,payment_data.user_id)
 
     assert payment.receiver == payment_data.receiver
     assert payment.sum == payment_data.sum
@@ -44,7 +45,6 @@ def test_get_payment_by_id(
         payment_data: Payment,
         payment_service: PaymentService
 ) -> None:
-    payment = payment_service.create_payment(payment_data.receiver, payment_data.sum, payment_data.type)
     payments = payment_service.get_all_payments()
     payment_data = payments[0]
     payment = payment_service.get_payment_by_id(payment_data.id)
