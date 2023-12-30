@@ -41,6 +41,12 @@ class PaymentRepo:
             payments.append(self._map_to_model(p))
         return payments
 
+    def get_user_payments(self, user_id: UUID) -> List[Payment]:
+        payments = []
+        for p in self.db.query(DBPayment).filter(DBPayment.user_id == user_id):
+            payments.append(self._map_to_model(p))
+        return payments
+
     def get_payment_by_id(self, payment_id: UUID) -> Payment:
         payment = self.db \
             .query(DBPayment) \
@@ -54,8 +60,6 @@ class PaymentRepo:
     def process_payment(self, payment_id: UUID) -> str:
         try:
             payment = self.get_payment_by_id(payment_id)
-            # Здесь вы можете добавить логику обработки оплаты, например, взаимодействие с платежным шлюзом.
-            # Для примера, просто устанавливаем сообщение в зависимости от случайного значения.
             success = bool(random.getrandbits(1))
             return "Payment processed successfully" if success else "Payment failed"
         except KeyError:

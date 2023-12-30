@@ -13,7 +13,7 @@ class PaymentRepo:
         if clear:
             payments.clear()
 
-    def create_payment(self, payment: Payment) -> Payment:
+    def create_payment(self, payment: Payment,) -> Payment:
         if len([p for p in payments if p.id == payment.id]) > 0:
             raise KeyError("Payment with the same id already exists.")
 
@@ -29,6 +29,13 @@ class PaymentRepo:
                 return payment
 
         raise KeyError
+
+    def get_user_payments(self, user_id: UUID) -> List[Payment]:
+        user_payments = []
+        for p in payments:
+            if p.user_id == user_id:
+                user_payments.append(p)
+        return payments
 
     def process_payment(self, payment_id: UUID) -> str:
         try:

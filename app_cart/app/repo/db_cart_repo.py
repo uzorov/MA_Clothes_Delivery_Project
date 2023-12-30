@@ -42,6 +42,16 @@ class CartRepo():
             raise KeyError
         return self._map_to_model(cart)
 
+    def get_cart_by_user(self, id:UUID, user_id: UUID) -> Cart:
+        cart = self.db \
+            .query(DBCart) \
+            .filter(DBCart.id == id and DBCart.user_id == user_id) \
+            .first()
+        if cart is None:
+            raise KeyError
+        return self._map_to_model(cart)
+
+
     def create_cart(self, cart: Cart) -> Cart:
         try:
             db_cart = self._map_to_schema(cart)

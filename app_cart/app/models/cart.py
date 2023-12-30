@@ -16,6 +16,7 @@ class Item(BaseModel):
 class Cart(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: UUID = uuid4()
+    user_id: UUID
     items: List[dict]
     total: float
 

@@ -17,14 +17,17 @@ class CartService():
 
     def get_cart_by_id(self, id: UUID):
         return self.cart_repo.get_cart(id)
-    
-    def create_cart(self, obj:Item) -> Cart:
+
+    def get_cart_by_user(self, id: UUID, user_id: UUID):
+        return self.cart_repo.get_cart_by_user(id, user_id)
+
+    def create_cart(self, obj:Item,user_id: UUID) -> Cart:
         item = []
         di = obj.__dict__
         di['id'] = str(di['id'])
         total = di['price'] * di['count']
         item.append(obj.__dict__)
-        cart = Cart(id=uuid4(), items=item, total=total)
+        cart = Cart(id=uuid4(), items=item, total=total,user_id=user_id)
         return self.cart_repo.create_cart(cart)
     
     def update_cart(self, id:UUID, obj:Item):

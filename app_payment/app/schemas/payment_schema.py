@@ -9,6 +9,7 @@ class Payment(Base):
     __tablename__ = 'payments'
 
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, unique=True, nullable=False)
+    user_id = Column(UUID(as_uuid=True))
     receiver = Column(String, nullable=False)
     sum = Column(Integer, nullable=False)
     type = Column(Enum(PaymentType), nullable=False)

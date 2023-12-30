@@ -11,6 +11,7 @@ class PaymentType(Enum):
 class Payment(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: UUID
+    user_id: UUID
     receiver: str
     sum: int
     type: PaymentType

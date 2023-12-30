@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Header
 from uuid import UUID
 
 from app.models.create_payment_request import CreatePaymentRequest
@@ -41,16 +41,28 @@ def get_all_payments(payment_service: PaymentService = Depends(PaymentService)) 
     with tracer.start_as_current_span("Get payments"):
         return payment_service.get_all_payments()
 
+@payment_router.get('/')
+def get_users_payments(payment_service: PaymentService = Depends(PaymentService),
+                     user: str = Header(...)) -> list[Payment]:
+    with tracer.start_as_current_span("Get payments"):
+        user = eval(user)
+        try:
+            if user['id'] is not None:
+                if user['role'] == "Viewer" or user['role'] == "Customer":
+                    return payment_service.get_users_payments(user['id'])
+        except KeyError:
+            raise HTTPException(404, f'Order with id={id} not found')
 
 @payment_router.post('/')
 def create_payment(
         payment_info: CreatePaymentRequest,
+        user_id: UUID,
         payment_service: PaymentService = Depends(PaymentService)
 ) -> Payment:
     with tracer.start_as_current_span("Create payment"):
         try:
             payment = payment_service.create_payment(payment_info.receiver, payment_info.sum,
-                                                     PaymentType(payment_info.type))
+                                                     PaymentType(payment_info.type), user_id)
             return payment.dict()
         except KeyError:
             raise HTTPException(400, f'Payment with id={payment_info.id} already exists')
