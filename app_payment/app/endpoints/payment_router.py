@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Header
 from uuid import UUID
+import asyncio
 
 from app.models.create_payment_request import CreatePaymentRequest
 from app.services.payment_service import PaymentService
 from app.models.payment_model import Payment, PaymentType
+from app.rabbitmq import send_payment_message
 
 
 from opentelemetry import trace
@@ -62,7 +64,7 @@ def create_payment(
     with tracer.start_as_current_span("Create payment"):
         try:
             payment = payment_service.create_payment(payment_info.receiver, payment_info.sum,
-                                                     PaymentType(payment_info.type), user_id)
+                                                     PaymentType(payment_info.type), user_id, payment_info.order_id)
             return payment.dict()
         except KeyError:
             raise HTTPException(400, f'Payment with id={payment_info.id} already exists')
@@ -75,6 +77,9 @@ def process_payment(
 ) -> str:
     try:
         result = payment_service.process_payment(id)
+        if(result == "Payment processed successfully"):
+            payment = get_payment_by_id(id)
+            asyncio.run(send_payment_message(payment))
         return result
     except KeyError:
         raise HTTPException(404, f'Payment with id={id} not found')
