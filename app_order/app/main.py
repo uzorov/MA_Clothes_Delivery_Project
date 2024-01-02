@@ -17,4 +17,3 @@ def startup():
 app.add_middleware(SessionMiddleware, secret_key='asas12334sadfdsf')
 app.include_router(metrics_router, prefix='/api')
 app.include_router(order_router, prefix='/api')
-app.include_router(auth_router, prefix='/api')

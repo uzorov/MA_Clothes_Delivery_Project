@@ -34,6 +34,15 @@ class OrderRepo():
             orders.append(self._map_to_model(d))
         return orders
 
+    def get_user_order_by_id(self, id: UUID, user_id: UUID) -> Order:
+        order = self.db \
+            .query(DBOrder) \
+            .filter(DBOrder.id == id and DBOrder.user_id == user_id) \
+            .first()
+        if order is None:
+            raise KeyError
+        return self._map_to_model(order)
+    
     def get_order_by_id(self, id: UUID) -> Order:
         order = self.db \
             .query(DBOrder) \

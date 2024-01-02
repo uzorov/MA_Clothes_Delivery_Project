@@ -41,6 +41,9 @@ tracer = trace.get_tracer(name)
 logging.basicConfig()
 
 
+logging.basicConfig()
+
+
 host_ip = "192.168.1.92"
 
 
@@ -70,55 +73,41 @@ def get_metrics():
     )
 
 @order_router.get('/')
-def get_user_orders(request: Request, order_service: OrderService = Depends(OrderService), user: dict = Depends(get_user_role)) -> list[Order]:
-    with tracer.start_as_current_span("Get user orders"):
-        if user['role'] != '':
+def get_user_orders(request: Request, order_service: OrderService = Depends(OrderService), user: str = Header(...),) -> None:
+    user = eval(user)
+    if user['id'] is not None:
+        if user['role'] == "Viewer" or user['role'] == "Customer":
+            get_orders_count.inc(1)
+            return order_service.get_user_orders(UUID(user['id']))
+        raise HTTPException(status_code=403, detail=f"{user['role']}")
+        
+        
+@order_router.get('/{id}')
+def get_order_by_id(id: UUID, request: Request, order_service: OrderService = Depends(OrderService), user: str = Header(...),) -> Order:
+    user = eval(user)
+    try:
+        if user['id'] is not None:
             if user['role'] == "Viewer" or user['role'] == "Customer":
-                get_orders_count.inc(1)
-                return order_service.get_user_orders(UUID(user['id']))
-            raise HTTPException(status_code=403, detail=f"{user['role']}")
-        else:
-            request.session['prev_url'] = str(request.url)
-            return RedirectResponse(url=f"http://{host_ip}:80/auth/login")
-        
-    
-        
-@order_router.get('/{id}}')
-def get_order_by_id(id: UUID, request: Request, order_service: OrderService = Depends(OrderService), user_role: str = Depends(get_user_role)) -> Order:
-    with tracer.start_as_current_span("Get order by id"):
-        try:
-            if user_role is not None:
-                if user_role == "Viewer" or user_role == "Customer":
-                    get_order_by_id_count.inc(1)
-                    return order_service.get_order_by_id(id)
-            else:
-                return RedirectResponse(url=f"http://{host_ip}:80/auth/login")
-        except KeyError:
-            raise HTTPException(404, f'Order with id={id} not found')
+                get_order_by_id_count.inc(1)
+                return order_service.get_user_order_by_id(id, user['id'])  
+    except KeyError:
+        raise HTTPException(404, f'Order with id={id} not found')
     
 @order_router.post('/')
-def create_order(cart: UUID, price: float, order_service: OrderService = Depends(OrderService), user_role: str = Depends(get_user_role)) -> Order:
+def create_order(user_id: UUID, cart: UUID, price: float, order_service: OrderService = Depends(OrderService)) -> Order:
     try:
-        if user_role is not None:
-            if user_role == "Viewer" or user_role == "Customer":
-                create_order_count.inc(1)
-                order = order_service.create_order(cart, price)
-                return order.dict()
-        else:
-            return RedirectResponse(url=f"http://{host_ip}:80/auth/login")        
+        create_order_count.inc(1)
+        order = order_service.create_order(cart, price, user_id)
+        return order.dict()   
     except KeyError:
         raise HTTPException(404, f'Order with not found')
 
 
 @order_router.post('/{id}/paid')
-def paid_order(id: UUID, order_service: OrderService = Depends(OrderService), user_role: str = Depends(get_user_role)) -> Order:
+def paid_order(id: UUID, order_service: OrderService = Depends(OrderService)) -> Order:
     try:
-        if user_role is not None:
-            if user_role == "Viewer" or user_role == "Customer":
-                order = order_service.paid_order(id)
-                return order.dict()
-        else:
-            return RedirectResponse(url=f"http://{host_ip}:80/auth/login")
+        order = order_service.paid_order(id)
+        return order.dict()
     except KeyError:
         raise HTTPException(404, f'Order with id={id} not found')
     except ValueError:
