@@ -63,20 +63,11 @@ def get_metrics():
         content=prometheus_client.generate_latest()
     )
 
-@cart_router.get('/test')
-def get_carts_test(cart_service: CartService = Depends(CartService)) -> list[Cart]:
-    return cart_service.get_carts()
-
 @cart_router.get('/')
-def get_carts(cart_service: CartService = Depends(CartService), user_role: str = Depends(get_user_role)) -> list[Cart]:
+def get_carts(cart_service: CartService = Depends(CartService)) -> list[Cart]:
     with tracer.start_as_current_span("Get carts"):
-        if user_role is not None:
-            if user_role == "Viewer" or user_role == "Customer":
-                get_cart_count.inc(1)
-                return cart_service.get_carts()
-            raise HTTPException(status_code=403, detail=f"{user_role}")
-        else:
-            return RedirectResponse(url=f"http://{host_ip}:80/auth/login")
+        get_cart_count.inc(1)
+        return cart_service.get_carts()
 
 @cart_router.get('/{id}}')
 def get_cart_by_id(id: UUID, cart_service: CartService = Depends(CartService), user: str = Header(...)) -> Cart:
@@ -87,23 +78,21 @@ def get_cart_by_id(id: UUID, cart_service: CartService = Depends(CartService), u
                 if user['role'] == "Viewer" or user['role'] == "Customer":
                     get_cart_by_id_count.inc(1)
                     return cart_service.get_cart_by_user(id, user['id'])
-            else:
-                return RedirectResponse(url=f"http://{host_ip}:80/auth/login")
         except KeyError:
             raise HTTPException(404, f'Cart with id={id} not found')
 
 @cart_router.post('/')
-def create_or_update_cart(item: Item, user_id: UUID, cart_service: CartService = Depends(CartService), id: Optional[UUID] = None, user_role: str = Depends(get_user_role)) -> Cart:
+def create_or_update_cart(item: Item, cart_service: CartService = Depends(CartService), user: str = Header(...)) -> Cart:
+    user = eval(user)
     try:
-        if user_role is not None:
-            if user_role == "Viewer" or user_role == "Customer":
-                if id and cart_service.get_cart_by_id(id):
+        if user['id'] is not None:
+            if user['role'] == "Viewer" or user['role'] == "Customer":
+                if cart_service.get_cart_by_user(user['id']):
                     create_cart_count.inc(1)
-                    order = cart_service.update_cart(id, item)
+                    order = cart_service.update_cart(user['id'], item)
                     return order.__dict__
-                order = cart_service.create_cart(item,user_id)
-                return order.dict()
-        else:
-            return RedirectResponse(url=f"http://{host_ip}:80/auth/login")  
+                order = cart_service.create_cart(item, user['id'])
+                return order.dict()  
     except KeyError:
         raise HTTPException(404, f'Order with {id} not found')
+
