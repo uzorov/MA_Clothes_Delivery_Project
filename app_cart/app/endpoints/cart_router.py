@@ -1,13 +1,11 @@
 from uuid import UUID
-from fastapi import APIRouter, Depends, HTTPException, Body, Header
-from typing import Optional
+from fastapi import APIRouter, Depends, HTTPException, Header
 from app.services.cart_service import CartService
 from app.models.cart import Cart, Item
 import prometheus_client
 from fastapi import Response
-import app.endpoints.auth_router as auth
-from starlette.responses import RedirectResponse
-from app.endpoints.auth_router import get_user_role
+import httpx
+
 
 from opentelemetry import trace
 from opentelemetry.sdk.resources import Resource
@@ -55,6 +53,17 @@ create_cart_count = prometheus_client.Counter(
 )
 
 host_ip = "172.19.64.1"
+target_service_url = "http://microservice-cart-1:80"
+
+def make_request_to_target_service(data):
+    url = f"{target_service_url}/order/?user_id={data['id']}&cart={data['cart']}&price={data['total']}"
+    with httpx.Client() as client:
+        response = client.post(url)
+
+    if response.status_code == 200:
+        return response.status_code
+    else:
+        raise Exception(f"Error making request: {response.status_code}, {response.text}")
 
 @metrics_router.get('/metrics')
 def get_metrics():
@@ -70,14 +79,14 @@ def get_carts(cart_service: CartService = Depends(CartService)) -> list[Cart]:
         return cart_service.get_carts()
 
 @cart_router.get('/{id}}')
-def get_cart_by_id(id: UUID, cart_service: CartService = Depends(CartService), user: str = Header(...)) -> Cart:
+def get_cart_by_id(cart_service: CartService = Depends(CartService), user: str = Header(...)) -> Cart:
     with tracer.start_as_current_span("Get cart by id"):
         user = eval(user)
         try:
             if user['id'] is not None:
                 if user['role'] == "Viewer" or user['role'] == "Customer":
                     get_cart_by_id_count.inc(1)
-                    return cart_service.get_cart_by_user(id, user['id'])
+                    return cart_service.get_cart_by_user(user['id'])
         except KeyError:
             raise HTTPException(404, f'Cart with id={id} not found')
 
@@ -89,10 +98,25 @@ def create_or_update_cart(item: Item, cart_service: CartService = Depends(CartSe
             if user['role'] == "Viewer" or user['role'] == "Customer":
                 if cart_service.get_cart_by_user(user['id']):
                     create_cart_count.inc(1)
-                    order = cart_service.update_cart(user['id'], item)
-                    return order.__dict__
-                order = cart_service.create_cart(item, user['id'])
-                return order.dict()  
+                    cart = cart_service.update_cart(user['id'], item)
+                    return cart.__dict__
+                cart = cart_service.create_cart(item, user['id'])
+                return cart.dict()  
     except KeyError:
-        raise HTTPException(404, f'Order with {id} not found')
+        raise HTTPException(404, f'Cart with {id} not found')
 
+
+@cart_router.post('/create_order')
+def create_order(cart_service: CartService = Depends(CartService), user: str = Header(...)) -> Cart:
+    user = eval(user)
+    try:
+        if user['id'] is not None:
+            if user['role'] == "Viewer" or user['role'] == "Customer":
+                cart = cart_service.get_cart_by_user(user['id'])
+                if cart:
+                    data = {'user_id': user['id'], 'cart': cart.id, 'price': cart.total}
+                    make_request_to_target_service(data)
+                    cart = cart_service.set_cart_status(user['id'])
+                    return cart.__dict__ 
+    except KeyError:
+        raise HTTPException(404, f'Cart with {id} not found')

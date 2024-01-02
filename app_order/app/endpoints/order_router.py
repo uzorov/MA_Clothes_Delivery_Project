@@ -1,13 +1,9 @@
 from uuid import UUID
-import asyncio
-from fastapi import APIRouter, Depends, HTTPException, Body
+from fastapi import APIRouter, Depends, HTTPException, Header
 from app.services.order_service import OrderService
 from app.models.order import Order
 import prometheus_client
 from fastapi import Response
-import app.endpoints.auth_router as auth
-from starlette.responses import RedirectResponse
-from app.endpoints.auth_router import get_user_role
 import logging
 from starlette.requests import Request
 

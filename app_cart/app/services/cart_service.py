@@ -39,7 +39,7 @@ class CartService():
         cart.items.append(obj.__dict__)
         return self.cart_repo.update_cart(cart)
     
-    def set_order_status(self, user_id:UUID):
+    def set_cart_status(self, user_id:UUID):
         cart = self.get_cart_by_user(user_id)
         cart.status = CartStatuses.IN_ORDER
         return self.cart_repo.update_cart(cart)
