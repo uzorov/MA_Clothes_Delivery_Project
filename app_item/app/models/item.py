@@ -1,8 +1,6 @@
-import enum
-from typing import List, Optional
 from uuid import UUID, uuid4
-from pydantic import BaseModel, ConfigDict, validator, HttpUrl
-from pydantic.color import Color
+from pydantic import BaseModel, ConfigDict
+from app.models.design_model import Design
 
 
 class Item(BaseModel):
@@ -10,4 +8,8 @@ class Item(BaseModel):
     id: UUID = uuid4()
     name: str
     price: float
+    design: Design
 
+
+class CreateItemRequest(BaseModel):
+    id: UUID = uuid4()
