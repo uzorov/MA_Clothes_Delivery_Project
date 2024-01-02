@@ -12,6 +12,9 @@ class Item(BaseModel):
     size: str
     count: int
 
+class CartStatuses(enum.Enum):
+    CREATED = 'created'
+    IN_ORDER = 'done'
 
 class Cart(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -19,4 +22,5 @@ class Cart(BaseModel):
     user_id: UUID
     items: List[dict]
     total: float
+    status: CartStatuses
 
