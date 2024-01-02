@@ -8,7 +8,7 @@ from app.schemas.base_schema import Base
 
 class Cart(Base):
     __tablename__ = 'carts'
-    id = Column(Integer, primary_key=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4())
     user_id = Column(UUID(as_uuid=True))
     total = Column(Float, nullable=True, default=1)
     items = Column(JSON, nullable=True)
