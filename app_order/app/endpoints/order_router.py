@@ -6,7 +6,7 @@ import prometheus_client
 from fastapi import Response
 import logging
 from starlette.requests import Request
-
+import httpx
 from opentelemetry import trace
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
@@ -68,6 +68,17 @@ def get_metrics():
         content=prometheus_client.generate_latest()
     )
 
+target_service_url = "http://app_payment:82"
+
+def make_request_to_payment_service(data):
+    url = f"{target_service_url}/payments/?sum={data['price']}&order_id={data['id']}&user_id={data['user_id']}&type=Банковская карта"
+    with httpx.Client() as client:
+        response = client.post(url)
+    if response.status_code == 200:
+        return response.status_code
+    else:
+        raise Exception(f"Error making request to payment: {response.status_code}, {response.text}")
+
 @order_router.get('/')
 def get_user_orders(request: Request, order_service: OrderService = Depends(OrderService), user: str = Header(...),) -> None:
     user = eval(user)
@@ -94,6 +105,7 @@ def create_order(user_id: UUID, cart: UUID, price: float, order_service: OrderSe
     try:
         create_order_count.inc(1)
         order = order_service.create_order(cart, price, user_id)
+        make_request_to_payment_service(order)
         return order.dict()   
     except KeyError:
         raise HTTPException(404, f'Order with not found')
