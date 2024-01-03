@@ -73,7 +73,8 @@ printing_service_url = "http://app_printing:81"
 
 
 def make_request_to_payment_service(data):
-    url = f"{payment_service_url}/payments/?sum={data['price']}&order_id={data['id']}&user_id={data['user_id']}&type=Банковская карта"
+    print("Payment req")
+    url = f"{payment_service_url}/payments/?sum={data['price']}&order_id={data['id']}&user_id={data['user_id']}&type=PC"
     with httpx.Client() as client:
         response = client.post(url)
     if response.status_code == 200:
@@ -82,6 +83,7 @@ def make_request_to_payment_service(data):
         raise Exception(f"Error making request to payment: {response.status_code}, {response.text}")
 
 def make_request_to_printing_service(data):
+    print("Printing req")
     url = f"{printing_service_url}/printing/?id={data['id']}"
     with httpx.Client() as client:
         response = client.post(url)
@@ -116,6 +118,7 @@ def create_order(user_id: UUID, cart: UUID, price: float, order_service: OrderSe
     try:
         create_order_count.inc(1)
         order = order_service.create_order(cart, price, user_id)
+        print("Added to db")
         make_request_to_payment_service(order)
         make_request_to_printing_service(order)
 
