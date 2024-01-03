@@ -64,16 +64,16 @@ cancelled_printing_count = prometheus_client.Counter(
     "Total canceled printings"
 )
 
-delivery_service_url = "http://app_printing:81"
+delivery_service_url = "http://app_delivery:81"
 
 def make_request_to_delivery_service(data):
-    url = f"{delivery_service_url}/printing/?id={data['id']}"
+    url = f"{delivery_service_url}/delivery/?id={data}"
     with httpx.Client() as client:
         response = client.post(url)
     if response.status_code == 200:
         return response.status_code
     else:
-        raise Exception(f"Error making request to payment: {response.status_code}, {response.text}")
+        raise Exception(f"Error making request to delivery: {response.status_code}, {response.text}")
 
 @printing_router.get('/')
 def get_printings(printing_service: PrintingService = Depends(PrintingService)) -> list[Printing]:
@@ -90,6 +90,7 @@ def add_printing(
     with tracer.start_as_current_span("Add printing"):
         try:
             printing = printing_service.create_printing(printing_info.id)
+            make_request_to_delivery_service(printing_info.id)
             created_printing_count.inc(1)
             return printing.dict()
         except KeyError:
