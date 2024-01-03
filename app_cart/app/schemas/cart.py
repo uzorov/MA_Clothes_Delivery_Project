@@ -1,10 +1,9 @@
-from sqlalchemy import Column, Integer, Float, JSON, Enum
+from sqlalchemy import Column, Float, JSON, Enum
 from sqlalchemy.dialects.postgresql import UUID
 from uuid import uuid4
-from sqlalchemy.orm import relationship
 from app.models.cart import CartStatuses
-
 from app.schemas.base_schema import Base
+
 
 class Cart(Base):
     __tablename__ = 'carts'

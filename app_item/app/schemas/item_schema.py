@@ -1,7 +1,5 @@
-from sqlalchemy import Column, String, Enum
+from sqlalchemy import Column, String, Enum, JSON, Integer
 from sqlalchemy.dialects.postgresql import UUID
-from app.models.design import Design
-
 from app.schemas.base_schema import Base
 
 
@@ -10,5 +8,5 @@ class Item(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True)
     name = Column(String, nullable=False)
-    price = Column(Enum, nullable=True)
-    design = Column(Design, nullable=True)
+    price = Column(Integer, nullable=True)
+    design = Column(JSON, nullable=True)

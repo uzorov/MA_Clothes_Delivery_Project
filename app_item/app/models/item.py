@@ -1,6 +1,11 @@
+from typing import List
 from uuid import UUID, uuid4
 from pydantic import BaseModel, ConfigDict
-from app.models.design import Design
+
+
+class Design(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    image_url: str
 
 
 class Item(BaseModel):
@@ -8,7 +13,7 @@ class Item(BaseModel):
     id: UUID = uuid4()
     name: str
     price: float
-    design: Design
+    design: List[dict]
 
 
 class CreateItemRequest(BaseModel):

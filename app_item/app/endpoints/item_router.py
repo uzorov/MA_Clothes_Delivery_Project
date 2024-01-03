@@ -68,9 +68,9 @@ def get_items(item_service: ItemService = Depends(ItemService)) -> list[Item]:
     return item_service.get_items()
 
 
-@item_router.get('/{code}')
-def get_items_by_id(name: str, item_service: ItemService = Depends(ItemService)) -> Item:
-    return item_service.get_item(name)
+@item_router.get('/{id}')
+def get_items_by_id(id: str, item_service: ItemService = Depends(ItemService)) -> Item:
+    return item_service.get_items_by_id(id)
 
 
 @item_router.post('/')

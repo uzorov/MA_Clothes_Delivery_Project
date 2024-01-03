@@ -1,7 +1,7 @@
 import enum
 from uuid import UUID, uuid4
-from typing import List, Optional
-from pydantic import BaseModel, ConfigDict, Json
+from typing import List
+from pydantic import BaseModel, ConfigDict
 
 
 class Item(BaseModel):
@@ -12,9 +12,11 @@ class Item(BaseModel):
     size: str
     count: int
 
+
 class CartStatuses(enum.Enum):
     CREATED = 'created'
     IN_ORDER = 'done'
+
 
 class Cart(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -23,4 +25,3 @@ class Cart(BaseModel):
     items: List[dict]
     total: float
     status: CartStatuses
-
