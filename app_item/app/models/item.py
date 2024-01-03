@@ -1,6 +1,6 @@
 from uuid import UUID, uuid4
 from pydantic import BaseModel, ConfigDict
-from app.models.design_model import Design
+from app.models.design import Design
 
 
 class Item(BaseModel):

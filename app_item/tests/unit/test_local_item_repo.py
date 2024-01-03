@@ -4,7 +4,7 @@ from time import sleep
 from datetime import datetime
 
 from app.models.item import Item
-from app.repo.local_item_repo import ItemRepo
+from app.repositories.local_item_repo import ItemRepo
 
 @pytest.fixture(scope='session')
 def item_repo() -> ItemRepo:

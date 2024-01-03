@@ -1,7 +1,7 @@
 from uuid import UUID, uuid4
 from app.models.item import Item
 from fastapi import Depends
-from app.models.design_model import Design
+from app.models.design import Design
 
 from app.repo.ви_item_repo import ItemRepo
 

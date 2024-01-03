@@ -1,6 +1,6 @@
 import pytest
 from uuid import UUID, uuid4
-from app.models.design_model import Design
+from app.models.design import Design
 from app.repositories.design_repo import DesignRepo
 
 
@@ -13,7 +13,6 @@ def design_repo() -> DesignRepo:
 def sample_design() -> Design:
     return Design(
         id=uuid4(),
-        name='Sample Design',
         image_url='https://example.com/sample_design.jpg',
     )
 

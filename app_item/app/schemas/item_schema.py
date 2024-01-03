@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Enum
 from sqlalchemy.dialects.postgresql import UUID
-from app.models.design_model import Design
+from app.models.design import Design
 
 from app.schemas.base_schema import Base
 

@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from typing import List
 from uuid import UUID
-from app.models.design_model import Design
+from app.models.design import Design
 
 designs: list[Design] = [
     Design(id=UUID('16d74d90-6e38-4bd4-be00-8e0e271f9351'),
