@@ -14,15 +14,16 @@ def item_repo() -> ItemRepo:
 def first_item() -> Item:
     name = 'футболка'
     price = 100
-
-    return Item(id=uuid4(), name=name, price=price)
+    design = Design(id=uuid4(), image_url="https://example.com/design")
+    return Item(id=uuid4(), name=name, price=price, design=design)
 
 @pytest.fixture(scope='session')
 def second_item() -> Item:
     name = 'футболка2'
     price = 200
+    design = Design(id=uuid4(), image_url="https://example.com/design")
 
-    return Item(id=uuid4(), name=name, price=price)
+    return Item(id=uuid4(), name=name, price=price, design=design)
 
 
 def test_empty_list(item_repo: ItemRepo) -> None:
