@@ -5,7 +5,6 @@ from uuid import UUID
 class Design(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: UUID
-    name: str
     image_url: str
 
 

@@ -3,7 +3,7 @@ from uuid import UUID, uuid4
 from datetime import datetime
 from typing import List
 
-from app.models.design_model import Design, DesignStatuses
+from app.models.design_model import Design
 from app.repositories.design_repo import DesignRepo
 
 
@@ -13,12 +13,8 @@ class DesignService:
     def __init__(self, design_repo: DesignRepo = Depends(DesignRepo)) -> None:
         self.design_repo = design_repo
 
-    def create_design(self, name:str, image_url: str) -> Design:
-        if not name and not image_url:
-            name = 'Пустой дизайн'
-        elif not name:
-            name = 'Свой дизайн'
-        design = Design(id=uuid4(), name = name, image_url=image_url, status=DesignStatuses.AVAILABLE)
+    def create_design(self,image_url: str) -> Design:
+        design = Design(id=uuid4(), image_url=image_url)
         return self.design_repo.create_design(design)
 
     def update_design_image(self, design_id: UUID, new_image: str) -> Design:

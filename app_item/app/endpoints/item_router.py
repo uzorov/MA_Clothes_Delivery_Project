@@ -77,10 +77,11 @@ def get_items_by_id(name: str, item_service: ItemService = Depends(ItemService))
 def create_item(
         name: str,
         price: float,
+        design: Design,
         item_service: ItemService = Depends(ItemService)) -> Item:
     with tracer.start_as_current_span("Create item"):
         try:
-            item = item_service.create_item(name, price)
+            item = item_service.create_item(name, price, design)
             return item.dict()
         except KeyError:
             raise HTTPException(404, f'Cant create item')
