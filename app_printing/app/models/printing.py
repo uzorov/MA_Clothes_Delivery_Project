@@ -25,4 +25,3 @@ class Printing(BaseModel):
 
 class CreatePrintingRequest(BaseModel):
     id: UUID
-    date: datetime
