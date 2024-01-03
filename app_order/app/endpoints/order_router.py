@@ -68,10 +68,21 @@ def get_metrics():
         content=prometheus_client.generate_latest()
     )
 
-target_service_url = "http://app_payment:82"
+payment_service_url = "http://app_payment:82"
+printing_service_url = "http://app_printing:81"
+
 
 def make_request_to_payment_service(data):
-    url = f"{target_service_url}/payments/?sum={data['price']}&order_id={data['id']}&user_id={data['user_id']}&type=Банковская карта"
+    url = f"{payment_service_url}/payments/?sum={data['price']}&order_id={data['id']}&user_id={data['user_id']}&type=Банковская карта"
+    with httpx.Client() as client:
+        response = client.post(url)
+    if response.status_code == 200:
+        return response.status_code
+    else:
+        raise Exception(f"Error making request to payment: {response.status_code}, {response.text}")
+
+def make_request_to_printing_service(data):
+    url = f"{printing_service_url}/printing/?id={data['id']}"
     with httpx.Client() as client:
         response = client.post(url)
     if response.status_code == 200:
@@ -106,6 +117,8 @@ def create_order(user_id: UUID, cart: UUID, price: float, order_service: OrderSe
         create_order_count.inc(1)
         order = order_service.create_order(cart, price, user_id)
         make_request_to_payment_service(order)
+        make_request_to_printing_service(order)
+
         return order.dict()   
     except KeyError:
         raise HTTPException(404, f'Order with not found')

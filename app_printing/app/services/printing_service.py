@@ -1,6 +1,6 @@
 # /app_printing/services/printing_service.py
 import asyncio
-from datetime import datetime
+from datetime import datetime, timedelta
 from uuid import UUID
 
 from app.models.printing import Printing, PrintingStatuses
@@ -18,8 +18,10 @@ class PrintingService():
     def get_printings(self) -> list[Printing]:
         return self.printing_repo.get_printings()
 
-    def create_printing(self, order_id: UUID, date: datetime) -> Printing:
-        printing = Printing(id=order_id, date=date, status=PrintingStatuses.AWAITING)
+    def create_printing(self, order_id: UUID) -> Printing:
+        current_date = datetime.now()
+        future_date = current_date + timedelta(days=4)
+        printing = Printing(id=order_id, date=future_date, status=PrintingStatuses.AWAITING)
         return self.printing_repo.create_printing(printing)
 
     def begin_printing(self, id: UUID) -> Printing:
