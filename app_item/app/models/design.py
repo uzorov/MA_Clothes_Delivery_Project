@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+ifrom pydantic import BaseModel, ConfigDict
 from uuid import UUID
 
 
