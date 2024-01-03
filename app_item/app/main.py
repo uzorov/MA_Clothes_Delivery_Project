@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import FastAPI
 from app import rabbitmq
 from app.endpoints.item_router import item_router
