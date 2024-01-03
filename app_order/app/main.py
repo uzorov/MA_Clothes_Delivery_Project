@@ -3,7 +3,6 @@ import asyncio
 from app import rabbitmq
 from starlette.middleware.sessions import SessionMiddleware
 from app.endpoints.order_router import order_router, metrics_router
-from app.endpoints.auth_router import auth_router
 
 app = FastAPI(title='Order Service')
 
