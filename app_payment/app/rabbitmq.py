@@ -34,14 +34,27 @@ async def send_payment_message(id: UUID):
     await channel.close()
     await connection.close()
 
+async def send_payment_message_to_printing(id: UUID):
+    print('SENDING PAYMENT RESULT')
+    connection = await connect_robust(settings.amqp_url)
+    channel = await connection.channel()
+    message_body = json.dumps({'order_id': str(id)})
+    print(str(message_body))
+    await channel.default_exchange.publish(
+        Message(body=message_body.encode()),
+        routing_key='printing_payment_queue'
+    )
+    await channel.close()
+    await connection.close()
 
 async def consume_payment(loop: AbstractEventLoop) -> AbstractRobustConnection:
     connection = await connect_robust(settings.amqp_url, loop=loop)
     channel = await connection.channel()
 
     task_created_queue = await channel.declare_queue('payment_queue', durable=True)
-
     await task_created_queue.consume(process_payment)
+    printing_queue = await channel.declare_queue('printing_payment_queue', durable=True)
+    await printing_queue.consume(process_payment)
     print('Started RabbitMQ consuming for Payment Management...')
 
     return connection

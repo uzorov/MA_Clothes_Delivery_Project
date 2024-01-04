@@ -28,7 +28,7 @@ async def consume(loop: AbstractEventLoop) -> AbstractRobustConnection:
     connection = await connect_robust(settings.amqp_url, loop=loop)
     channel = await connection.channel()
 
-    paid_order_queue = await channel.declare_queue('payment_queue', durable=True)
+    paid_order_queue = await channel.declare_queue('printing_payment_queue', durable=True)
     await paid_order_queue.consume(process_paid_order)
 
     print('Started RabbitMQ consuming...')
