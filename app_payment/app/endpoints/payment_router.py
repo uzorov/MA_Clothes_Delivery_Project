@@ -5,7 +5,7 @@ import asyncio
 from app.models.create_payment_request import CreatePaymentRequest
 from app.services.payment_service import PaymentService
 from app.models.payment_model import Payment
-from app.rabbitmq import send_payment_message
+from app.rabbitmq import send_payment_message,send_payment_message_to_printing
 
 
 from opentelemetry import trace
@@ -83,6 +83,8 @@ def process_payment(
         if(result == "Payment processed successfully"):
             payment = payment_service.get_payment_by_id(id)
             asyncio.run(send_payment_message(payment.order_id))
+            asyncio.run(send_payment_message_to_printing(payment.order_id))
+
         return result
     except KeyError:
         raise HTTPException(404, f'Payment with id={id} not found')
