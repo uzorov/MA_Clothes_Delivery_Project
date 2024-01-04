@@ -10,10 +10,11 @@ from app.settings import settings
 
 
 async def process_paid_order(msg: IncomingMessage):
-    print(str(msg))
     try:
         data = json.loads(msg.body.decode())
+        print(str(data))
         order_id = data['order_id']
+        print(str(order_id))
         printings = PrintingService(PrintingRepo()).get_printings()
         for i in printings:
             if i.id == order_id:
