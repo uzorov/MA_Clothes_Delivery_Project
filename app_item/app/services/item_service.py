@@ -3,7 +3,7 @@ from app.models.item import Item
 from fastapi import Depends
 from app.models.item import Design
 
-from app.repo.db_item_repo import ItemRepo
+from app.repositories.db_item_repo import ItemRepo
 
 
 class ItemService():
@@ -21,10 +21,10 @@ class ItemService():
     def get_items(self) -> list[Item]:
         return self.item_repo.get_items()
 
-    def create_item(self, name: str, price: float, design: Design) -> Item:
-        if not name and not design.image_url:
+    def create_item(self, name: str, price: float, design: str) -> Item:
+        if not name and not design:
             name = 'Пустой дизайн'
         elif not name:
             name = 'Свой дизайн'
-        item = Item(id=uuid4(), name=name, price=price, design=design.__dict__)
+        item = Item(id=uuid4(), name=name, price=price, design=design)
         return self.item_repo.create_item(item)

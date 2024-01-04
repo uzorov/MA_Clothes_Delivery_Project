@@ -37,7 +37,7 @@ name = 'Item Service'
 tracer = trace.get_tracer(name)
 
 item_router = APIRouter(prefix='/item', tags=['Item'])
-target_service_url = "http://microservice-cart-1:80"
+target_service_url = "http://app_cart:86"
 
 
 async def make_request_to_target_service(data, cart_id):
@@ -77,7 +77,7 @@ def get_items_by_id(id: str, item_service: ItemService = Depends(ItemService)) -
 def create_item(
         name: str,
         price: float,
-        design: Design,
+        design: str,
         item_service: ItemService = Depends(ItemService)) -> Item:
     with tracer.start_as_current_span("Create item"):
         try:

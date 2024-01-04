@@ -13,7 +13,7 @@ class Item(BaseModel):
     id: UUID = uuid4()
     name: str
     price: float
-    design: List[dict]
+    design: str
 
 
 class CreateItemRequest(BaseModel):

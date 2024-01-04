@@ -9,4 +9,4 @@ class Item(Base):
     id = Column(UUID(as_uuid=True), primary_key=True)
     name = Column(String, nullable=False)
     price = Column(Integer, nullable=True)
-    design = Column(JSON, nullable=True)
+    design = Column(String, nullable=True)
