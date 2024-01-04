@@ -82,7 +82,7 @@ def process_payment(
         result = payment_service.process_payment(id)
         if(result == "Payment processed successfully"):
             payment = payment_service.get_payment_by_id(id)
-            asyncio.run(send_payment_message(str(payment)))
+            asyncio.run(send_payment_message(payment.order_id))
         return result
     except KeyError:
         raise HTTPException(404, f'Payment with id={id} not found')

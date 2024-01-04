@@ -1,6 +1,8 @@
 import json
 import traceback
 from asyncio import AbstractEventLoop
+from uuid import UUID
+
 from aio_pika.abc import AbstractRobustConnection
 from aio_pika import connect_robust, IncomingMessage, Message
 
@@ -19,12 +21,12 @@ from app.repositories.payment_repo import PaymentRepo  # Импортируем 
 #         await msg.ack()
 
 
-async def send_payment_message(data: str):
+async def send_payment_message(id: UUID):
     print('SENDING PAYMENT RESULT')
     connection = await connect_robust(settings.amqp_url)
     channel = await connection.channel()
-    print(data)
-    message_body = json.dumps(data)
+    message_body = json.dumps({'order_id': str(id)})
+    print(str(message_body))
     await channel.default_exchange.publish(
         Message(body=message_body.encode()),
         routing_key='payment_queue'
