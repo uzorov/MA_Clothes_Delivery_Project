@@ -18,7 +18,8 @@ class PaymentService:
     def get_user_payments(self, user_id: UUID) -> List[Payment]:
         return self.payment_repo.get_user_payments(user_id)
 
-    def create_payment(self, receiver: str, sum: int, user_id: UUID,order_id: UUID) -> Payment:
+    def create_payment(self, sum: int, user_id: UUID,order_id: UUID) -> Payment:
+        receiver = "ООО Зеленоглазое такси"
         payment = Payment(id=uuid4(), user_id=user_id, receiver=receiver, sum=sum, order_id=order_id)
         return self.payment_repo.create_payment(payment)
 
