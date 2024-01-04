@@ -18,6 +18,7 @@ async def process_paid_order(msg: IncomingMessage):
         printings = PrintingService(PrintingRepo()).get_printings()
         print(str(printings))
         for i in printings:
+            print(str(i.id))
             if i.id == str(order_id):
                 print('found')
                 PrintingService(PrintingRepo()).begin_printing(i.id)
