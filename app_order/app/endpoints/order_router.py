@@ -74,9 +74,10 @@ printing_service_url = "http://app_printing:81"
 
 def make_request_to_payment_service(data):
     print("Payment req")
-    url = f"{payment_service_url}/api/payments/?sum={data['price']}&order_id={data['id']}&user_id={data['user_id']}"
+    data = {'sum': str(data['price']),'order_id': str(data['id']),'user_id': str(data['user_id'])}
+    url = f"{payment_service_url}/api/payments/"
     with httpx.Client() as client:
-        response = client.post(url)
+        response = client.post(url, json=data)
     if response.status_code == 200:
         return response.status_code
     else:
@@ -84,9 +85,10 @@ def make_request_to_payment_service(data):
 
 def make_request_to_printing_service(data):
     print("Printing req")
-    url = f"{printing_service_url}/api/printing/?id={data['id']}"
+    url = f"{printing_service_url}/api/printing/"
+    data = {'id': str(data['id'])}
     with httpx.Client() as client:
-        response = client.post(url)
+        response = client.post(url, json=data)
     if response.status_code == 200:
         return response.status_code
     else:
