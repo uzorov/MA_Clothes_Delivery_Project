@@ -73,7 +73,7 @@ def create_payment(
             raise HTTPException(400, f'Payment with id={payment_info.id} already exists')
 
 
-@payment_router.put('/{id}/process')
+@payment_router.post('/{id}/process')
 def process_payment(
         id: UUID,
         payment_service: PaymentService = Depends(PaymentService)
@@ -81,8 +81,8 @@ def process_payment(
     try:
         result = payment_service.process_payment(id)
         if(result == "Payment processed successfully"):
-            payment = get_payment_by_id(id)
-            asyncio.run(send_payment_message(payment))
+            payment = payment_service.get_payment_by_id(id)
+            asyncio.run(send_payment_message(str(payment)))
         return result
     except KeyError:
         raise HTTPException(404, f'Payment with id={id} not found')
