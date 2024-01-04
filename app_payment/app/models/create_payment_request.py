@@ -10,4 +10,3 @@ class CreatePaymentRequest(BaseModel):
     sum: int
     order_id: UUID
     user_id: UUID
-    type: PaymentType

@@ -3,7 +3,7 @@ from app.models.promocode import Promocode
 from fastapi import Depends
 
 
-from app.repo.local_promocode_repo import PromocodeRepo
+from app.repo.db_promocode_repo import PromocodeRepo
 
 
 class PromocodeService():

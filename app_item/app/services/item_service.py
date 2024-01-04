@@ -3,7 +3,7 @@ from app.models.item import Item
 from fastapi import Depends
 from app.models.design import Design
 
-from app.repo.ви_item_repo import ItemRepo
+from app.repo.db_item_repo import ItemRepo
 
 
 class ItemService():

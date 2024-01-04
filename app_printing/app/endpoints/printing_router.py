@@ -89,6 +89,7 @@ def add_printing(
 ) -> Printing:
     with tracer.start_as_current_span("Add printing"):
         try:
+            print(str(printing_info))
             printing = printing_service.create_printing(printing_info.id)
             make_request_to_delivery_service(printing_info.id)
             created_printing_count.inc(1)

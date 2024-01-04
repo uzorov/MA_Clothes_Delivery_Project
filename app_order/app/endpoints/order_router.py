@@ -74,7 +74,7 @@ printing_service_url = "http://app_printing:81"
 
 def make_request_to_payment_service(data):
     print("Payment req")
-    url = f"{payment_service_url}/payments/?sum={data['price']}&order_id={data['id']}&user_id={data['user_id']}&type=PC"
+    url = f"{payment_service_url}/payments/?sum={data['price']}&order_id={data['id']}&user_id={data['user_id']}"
     with httpx.Client() as client:
         response = client.post(url)
     if response.status_code == 200:
@@ -119,8 +119,8 @@ def create_order(user_id: UUID, cart: UUID, price: float, order_service: OrderSe
         create_order_count.inc(1)
         order = order_service.create_order(cart, price, user_id)
         print("Added to db")
-        make_request_to_payment_service(order)
-        make_request_to_printing_service(order)
+        make_request_to_printing_service(order.dict())
+        make_request_to_payment_service(order.dict())
 
         return order.dict()   
     except KeyError:

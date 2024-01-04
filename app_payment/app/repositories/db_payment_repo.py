@@ -7,7 +7,6 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.payment_model import Payment
 from app.schemas.payment_schema import Payment as DBPayment
-from app.models.payment_model import PaymentType
 
 class PaymentRepo:
     db: Session

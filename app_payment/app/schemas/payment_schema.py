@@ -1,8 +1,7 @@
-from sqlalchemy import Column, String, Enum, Integer
+from sqlalchemy import Column, String, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base
 
-from app.models.payment_model import PaymentType
 from app.schemas.base_schema import Base
 
 class Payment(Base):
@@ -13,4 +12,3 @@ class Payment(Base):
     order_id = Column(UUID(as_uuid=True))
     receiver = Column(String, nullable=False)
     sum = Column(Integer, nullable=False)
-    type = Column(Enum(PaymentType), nullable=False)
