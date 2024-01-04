@@ -11,7 +11,7 @@ app = FastAPI(title='Payment Service')
 @app.on_event('startup')
 def startup():
     loop = asyncio.get_event_loop()
-    # asyncio.ensure_future(rabbitmq.consume_tasks(loop))
+    asyncio.ensure_future(rabbitmq.consume_payment(loop))
 
 
 app.include_router(payment_router, prefix='/api')

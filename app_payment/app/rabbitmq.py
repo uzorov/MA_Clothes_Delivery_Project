@@ -35,7 +35,7 @@ async def send_payment_message(id: UUID):
     await connection.close()
 
 
-async def consume_design(loop: AbstractEventLoop) -> AbstractRobustConnection:
+async def consume_payment(loop: AbstractEventLoop) -> AbstractRobustConnection:
     connection = await connect_robust(settings.amqp_url, loop=loop)
     channel = await connection.channel()
 
