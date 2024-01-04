@@ -64,12 +64,15 @@ cancelled_printing_count = prometheus_client.Counter(
     "Total canceled printings"
 )
 
-delivery_service_url = "http://app_delivery:81"
+delivery_service_url = "http://app_delivery:80"
 
-def make_request_to_delivery_service(data):
-    url = f"{delivery_service_url}/delivery/?id={data}"
+def make_request_to_delivery_service(id):
+    url = f"{delivery_service_url}/api/delivery/"
+    print(str(id))
+    data = {'id': str(id)}
+    print(str(data))
     with httpx.Client() as client:
-        response = client.post(url)
+        response = client.post(url, json=data)
     if response.status_code == 200:
         return response.status_code
     else:
