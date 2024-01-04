@@ -52,8 +52,7 @@ create_cart_count = prometheus_client.Counter(
     "Number of get requests"
 )
 
-host_ip = "172.19.64.1"
-target_service_url = "http://microservice-cart-1:80"
+target_service_url = "http://app_order:84"
 
 def make_request_to_target_service(data):
     url = f"{target_service_url}/order/?user_id={data['id']}&cart={data['cart']}&price={data['total']}"
