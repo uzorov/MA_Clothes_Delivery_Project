@@ -33,6 +33,7 @@ trace.get_tracer_provider().add_span_processor(
 )
 
 name='Payment Service'
+
 tracer = trace.get_tracer(name)
 
 payment_router = APIRouter(prefix='/payments', tags=['Payments'])

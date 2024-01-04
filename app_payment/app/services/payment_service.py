@@ -2,7 +2,7 @@ from fastapi import Depends
 from uuid import UUID, uuid4
 from typing import List
 
-from app.models.payment_model import Payment, PaymentType
+from app.models.payment_model import Payment
 from app.repositories.db_payment_repo import PaymentRepo
 
 
