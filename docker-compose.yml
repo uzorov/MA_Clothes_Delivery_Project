@@ -85,6 +85,21 @@ services:
     networks:
       - app
 
+  app_item:
+    build:
+      context: .
+      dockerfile: /app_item/Dockerfile
+    ports:
+      - "83:83"
+    # depends_on:
+    # - postgres-cart
+    # - rabbitmq
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
+    networks:
+      - app
+
   app_order:
     build:
       context: .
@@ -129,21 +144,6 @@ services:
       logging_jobname: "containerlogs"
     networks:
       - app
-
-#  app_item:
-#    build:
-#      context: .
-#      dockerfile: /app_item/Dockerfile
-#    ports:
-#      - "87:87"
-#    # depends_on:
-#    # - postgres-cart
-#    # - rabbitmq
-#    labels:
-#      logging: "promtail"
-#      logging_jobname: "containerlogs"
-#    networks:
-#      - app
 
   pgadmin:
     image: dpage/pgadmin4
