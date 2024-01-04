@@ -23,7 +23,7 @@ async def send_payment_message(data: str):
     print('SENDING PAYMENT RESULT')
     connection = await connect_robust(settings.amqp_url)
     channel = await connection.channel()
-
+    print(data)
     message_body = json.dumps(data)
     await channel.default_exchange.publish(
         Message(body=message_body.encode()),
