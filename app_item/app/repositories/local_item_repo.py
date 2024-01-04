@@ -1,5 +1,5 @@
 from app.models.item import Item
-from app.models.design import Design
+from app.models.item  import Design
 from uuid import UUID, uuid4
 
 # Добавить дизайны

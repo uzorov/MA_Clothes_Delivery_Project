@@ -5,7 +5,7 @@ from typing import Optional, List
 from app.services.item_service import ItemService
 from app.models.item import Item
 from app.services.design_service import DesignService
-from app.models.design_model import Design
+from app.models.item  import Design
 from enum import Enum
 import httpx
 
