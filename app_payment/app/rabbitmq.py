@@ -11,14 +11,14 @@ from app.services.payment_service import PaymentService  # Импортируе�
 from app.repositories.payment_repo import PaymentRepo  # Импортируем ваш репозиторий для задач
 
 
-# async def process_payment(msg: IncomingMessage):
-#     try:
-#         data = json.loads(msg.body.decode())
-#         await send_payment_message(data)
-#     except:
-#         traceback.print_exc()
-#     finally:
-#         await msg.ack()
+async def process_payment(msg: IncomingMessage):
+    try:
+        data = json.loads(msg.body.decode())
+        await send_payment_message(data)
+    except:
+        traceback.print_exc()
+    finally:
+        await msg.ack()
 
 
 async def send_payment_message(id: UUID):
@@ -35,13 +35,13 @@ async def send_payment_message(id: UUID):
     await connection.close()
 
 
-# async def consume_design(loop: AbstractEventLoop) -> AbstractRobustConnection:
-#     connection = await connect_robust(settings.amqp_url, loop=loop)
-#     channel = await connection.channel()
-#
-#     task_created_queue = await channel.declare_queue('payment_queue', durable=True)
-#
-#     await task_created_queue.consume(process_payment)
-#     print('Started RabbitMQ consuming for Payment Management...')
-#
-#     return connection
+async def consume_design(loop: AbstractEventLoop) -> AbstractRobustConnection:
+    connection = await connect_robust(settings.amqp_url, loop=loop)
+    channel = await connection.channel()
+
+    task_created_queue = await channel.declare_queue('payment_queue', durable=True)
+
+    await task_created_queue.consume(process_payment)
+    print('Started RabbitMQ consuming for Payment Management...')
+
+    return connection

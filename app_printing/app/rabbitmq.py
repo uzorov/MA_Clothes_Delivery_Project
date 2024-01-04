@@ -10,6 +10,7 @@ from app.settings import settings
 
 
 async def process_paid_order(msg: IncomingMessage):
+    print(str(msg))
     try:
         data = json.loads(msg.body.decode())
         order_id = data['order_id']
