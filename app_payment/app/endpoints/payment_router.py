@@ -4,7 +4,7 @@ import asyncio
 
 from app.models.create_payment_request import CreatePaymentRequest
 from app.services.payment_service import PaymentService
-from app.models.payment_model import Payment, PaymentType
+from app.models.payment_model import Payment
 from app.rabbitmq import send_payment_message
 
 

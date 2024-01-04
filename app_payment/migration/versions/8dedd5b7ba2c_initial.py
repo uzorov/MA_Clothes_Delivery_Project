@@ -1,8 +1,8 @@
 """initial
 
-Revision ID: bec1e7ad2bd9
+Revision ID: 8dedd5b7ba2c
 Revises: 
-Create Date: 2024-01-03 17:30:24.604922
+Create Date: 2024-01-04 15:57:57.312661
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'bec1e7ad2bd9'
+revision = '8dedd5b7ba2c'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,7 +24,6 @@ def upgrade() -> None:
     sa.Column('order_id', sa.UUID(), nullable=True),
     sa.Column('receiver', sa.String(), nullable=False),
     sa.Column('sum', sa.Integer(), nullable=False),
-    sa.Column('type', sa.Enum('PC', 'AC', name='paymenttype'), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_payments_id'), 'payments', ['id'], unique=True)
