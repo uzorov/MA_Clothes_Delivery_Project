@@ -94,7 +94,7 @@ def add_printing(
         try:
             print(str(printing_info))
             printing = printing_service.create_printing(printing_info.id)
-            make_request_to_delivery_service(printing_info.id)
+            #make_request_to_delivery_service(printing_info.id)
             created_printing_count.inc(1)
             return printing.dict()
         except KeyError:
