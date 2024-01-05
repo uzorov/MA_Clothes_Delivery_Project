@@ -131,16 +131,14 @@ def create_or_update_cart(item: Item, cart_service: CartService = Depends(CartSe
 #         raise HTTPException(404, f'Cart with {id} not found')
 
 @cart_router.post('/create_order')
-def create_order(cart_service: CartService = Depends(CartService)) -> Cart:
-    id = "801b87ac-6994-44b4-a65f-3fd7fdf3ca1b"
+def create_order(user: UUID, cart_service: CartService = Depends(CartService)) -> Cart:
     try:
         print("Router--------------------------------------------------------")
-        print(id)
-        cart = cart_service.get_cart_by_user(id)
-
-        data = {'user_id': id, 'cart': cart.id, 'price': cart.total}
+        print(user)
+        cart = cart_service.get_cart_by_user(user)
+        data = {'user_id': str(user), 'cart': cart.id, 'price': cart.total}
         make_request_to_target_service(data)
-        cart = cart_service.set_cart_status(id)
+        cart = cart_service.set_cart_status(user)
         return cart.dict()
     except KeyError:
         raise HTTPException(404, f'Cart with {id} not found')
