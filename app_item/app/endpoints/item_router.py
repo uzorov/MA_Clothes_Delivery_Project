@@ -40,7 +40,7 @@ item_router = APIRouter(prefix='/item', tags=['Item'])
 target_service_url = "http://app_cart:86"
 
 
-async def make_request_to_target_service(item_id,size,count,price,name,cart_id):
+def make_request_to_target_service(item_id,size,count,price,name,cart_id):
     url = f"{target_service_url}/api/cart/"
     if cart_id:
         data = {"id": item_id, "size": size, "count": count, "price": price, "name": name,"cart_id": cart_id}
@@ -95,7 +95,7 @@ async def add_to_cart(
     with tracer.start_as_current_span("Add to cart"):
         try:
             item = item_service.get_items_by_id(item_id)
-            result = await make_request_to_target_service(item_id,size,count,item.price,item.name,cart_id)
+            make_request_to_target_service(item_id,size,count,item.price,item.name,cart_id)
             return item
         except KeyError:
             raise HTTPException(404, f'Cant add to cart item')
