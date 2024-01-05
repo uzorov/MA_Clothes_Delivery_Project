@@ -47,7 +47,7 @@ def make_request_to_target_service(item_id,size,count,price,name,cart_id):
     else:
         data = {"id": item_id, "size": size, "count": count, "price": price, "name": name}
     with httpx.AsyncClient(timeout=30) as client:
-        response = await client.post(url, json=data)
+        response = client.post(url, json=data)
     if response.status_code == 200:
         return response.status_code
     else:
@@ -86,7 +86,7 @@ def create_item(
 
 
 @item_router.post('/add_to_cart')
-async def add_to_cart(
+def add_to_cart(
         item_id: str,
         count: int,
         size: dropdownChoices = Form(dropdownChoices),
