@@ -14,8 +14,8 @@ class Item(BaseModel):
 
 
 class CartStatuses(enum.Enum):
-    CREATED = 'created'
-    IN_ORDER = 'done'
+    CREATED = 'CREATED'
+    IN_ORDER = 'DONE'
 
 
 class Cart(BaseModel):
