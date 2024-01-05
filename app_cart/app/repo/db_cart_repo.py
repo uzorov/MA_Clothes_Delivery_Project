@@ -47,7 +47,7 @@ class CartRepo():
         print(str(user_id))
         cart = self.db \
             .query(DBCart) \
-            .filter(DBCart.user_id == user_id and DBCart.status == 'CREATED') \
+            .filter(DBCart.user_id == user_id) \
             .first()
         if cart is None:
             raise KeyError

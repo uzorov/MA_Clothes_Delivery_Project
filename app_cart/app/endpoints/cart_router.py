@@ -136,6 +136,7 @@ def create_order(user: UUID, cart_service: CartService = Depends(CartService)) -
         print("Router--------------------------------------------------------")
         print(user)
         cart = cart_service.get_cart_by_user(user)
+        print(str(cart))
         data = {'user_id': str(user), 'cart': cart.id, 'price': cart.total}
         make_request_to_target_service(data)
         cart = cart_service.set_cart_status(user)
