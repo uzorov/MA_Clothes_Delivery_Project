@@ -58,7 +58,7 @@ def make_request_to_target_service(data):
     print("_________________MAKE REQ__________________")
     print(str(data))
     url = f"{target_service_url}/api/order/"
-    json_data = {'user_id': str(data['user_id']),'cart':str(data['cart']),'price':str(data['total'])}
+    json_data = {'user_id': str(data['user_id']),'cart':str(data['cart']),'price':str(data['price'])}
     with httpx.Client(timeout=30) as client:
         response = client.post(url, json=json_data)
     if response.status_code == 200:
@@ -143,10 +143,7 @@ def create_order(user: UUID, cart_service: CartService = Depends(CartService)) -
             make_request_to_target_service(data)
         except KeyError:
             raise HTTPException(404, f'Cart make request')
-        try:
-            cart = cart_service.set_cart_status(user)
-            return cart.dict()
-        except KeyError:
-            raise HTTPException(404, f'Cart make request')
+        cart = cart_service.set_cart_status(user)
+        return cart.__dict__
     except KeyError:
         raise HTTPException(404, f'Cart with user {user} not found')

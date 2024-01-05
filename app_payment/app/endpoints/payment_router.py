@@ -44,7 +44,7 @@ def get_all_payments(payment_service: PaymentService = Depends(PaymentService)) 
     with tracer.start_as_current_span("Get payments"):
         return payment_service.get_all_payments()
 
-@payment_router.get('/')
+@payment_router.get('/get-user-payments')
 def get_users_payments(payment_service: PaymentService = Depends(PaymentService),
                      user: str = Header(...)) -> list[Payment]:
     with tracer.start_as_current_span("Get payments"):
