@@ -139,8 +139,14 @@ def create_order(user: UUID, cart_service: CartService = Depends(CartService)) -
         print(user)
         cart = cart_service.get_cart_by_user(user)
         data = {'user_id': str(user), 'cart': str(cart.id), 'price': str(cart.total)}
-        make_request_to_target_service(data)
-        cart = cart_service.set_cart_status(user)
-        return cart.dict()
+        try:
+            make_request_to_target_service(data)
+        except KeyError:
+            raise HTTPException(404, f'Cart make request')
+        try:
+            cart = cart_service.set_cart_status(user)
+            return cart.dict()
+        except KeyError:
+            raise HTTPException(404, f'Cart make request')
     except KeyError:
-        raise HTTPException(404, f'Cart with {id} not found')
+        raise HTTPException(404, f'Cart with user {user} not found')
