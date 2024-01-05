@@ -49,7 +49,7 @@ def make_request_to_target_service(item_id,size,count,price,name):
     if response.status_code == 200:
         return response.status_code
     else:
-        raise Exception(f"Error making request: {response.status_code}, {response.text}")
+        raise Exception(f"Error making request:{response.status_code}, {response.text}")
 
 
 class dropdownChoices(str, Enum):
