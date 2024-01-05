@@ -40,19 +40,17 @@ item_router = APIRouter(prefix='/item', tags=['Item'])
 target_service_url = "http://app_cart:86"
 
 
-async def make_request_to_target_service(data, cart_id):
+async def make_request_to_target_service(item_id,size,count,price,name,cart_id):
+    url = f"{target_service_url}/api/cart/"
     if cart_id:
-        url = f"{target_service_url}/cart/?id={cart_id}"
+        data = {"id": item_id, "size": size, "count": count, "price": price, "name": name,"cart_id": cart_id}
     else:
-        url = f"{target_service_url}/cart/"
-    async with httpx.AsyncClient() as client:
+        data = {"id": item_id, "size": size, "count": count, "price": price, "name": name}
+    with httpx.AsyncClient(timeout=30) as client:
         response = await client.post(url, json=data)
-
-    # Handle the response as needed
     if response.status_code == 200:
         return response.status_code
     else:
-        # Handle the error
         raise Exception(f"Error making request: {response.status_code}, {response.text}")
 
 
@@ -97,8 +95,7 @@ async def add_to_cart(
     with tracer.start_as_current_span("Add to cart"):
         try:
             item = item_service.get_items_by_id(item_id)
-            data = {"id": item_id, "size": size, "count": count, "price": item.price, "name": item.name}
-            result = await make_request_to_target_service(data, cart_id)
+            result = await make_request_to_target_service(item_id,size,count,item.price,item.name,cart_id)
             return item
         except KeyError:
             raise HTTPException(404, f'Cant add to cart item')

@@ -55,10 +55,10 @@ create_cart_count = prometheus_client.Counter(
 target_service_url = "http://app_order:84"
 
 def make_request_to_target_service(data):
-    url = f"{target_service_url}/order/?user_id={data['id']}&cart={data['cart']}&price={data['total']}"
-    with httpx.Client() as client:
-        response = client.post(url)
-
+    url = f"{target_service_url}/api/order/"
+    json_data = {'user_id': data['id'],'cart':data['cart'],'price':data['total']}
+    with httpx.Client(timeout=30) as client:
+        response = client.post(url,json=json_data)
     if response.status_code == 200:
         return response.status_code
     else:
