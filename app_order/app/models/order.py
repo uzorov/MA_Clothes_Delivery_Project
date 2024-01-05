@@ -17,3 +17,9 @@ class Order(BaseModel):
     status: OrderStatuses
     discount: float | None
     price: float
+
+
+class CreateOrderRequest(BaseModel):
+    user_id: UUID
+    cart: UUID
+    price: float

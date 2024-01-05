@@ -1,7 +1,7 @@
 from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Header
 from app.services.order_service import OrderService
-from app.models.order import Order
+from app.models.order import Order,CreateOrderRequest
 import prometheus_client
 from fastapi import Response
 import logging
@@ -116,11 +116,11 @@ def get_order_by_id(id: UUID, request: Request, order_service: OrderService = De
         raise HTTPException(404, f'Order with id={id} not found')
     
 @order_router.post('/')
-def create_order(user_id: UUID, cart: UUID, price: int, order_service: OrderService = Depends(OrderService)) -> Order:
+def create_order(order_info: CreateOrderRequest, order_service: OrderService = Depends(OrderService)) -> Order:
     print("___________CREATE_ORDER___________________")
     try:
         create_order_count.inc(1)
-        order = order_service.create_order(cart, price, user_id)
+        order = order_service.create_order(order_info.cart, order_info.price, order_info.user_id)
         print("Added to db")
         make_request_to_printing_service(order.dict())
         make_request_to_payment_service(order.dict())
