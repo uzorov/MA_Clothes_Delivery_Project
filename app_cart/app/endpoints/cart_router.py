@@ -115,17 +115,30 @@ def create_or_update_cart(item: Item, cart_service: CartService = Depends(CartSe
     except KeyError:
         raise HTTPException(404, f'Cart with {id} not found')
 
+# @cart_router.post('/create_order')
+# def create_order(cart_service: CartService = Depends(CartService), user: str = Header(...)) -> Cart:
+#     user = eval(user)
+#     try:
+#         if user['id'] is not None:
+#             if user['role'] == "Viewer" or user['role'] == "Customer":
+#                 cart = cart_service.get_cart_by_user(user['id'])
+#                 if cart:
+#                     data = {'user_id': user['id'], 'cart': cart.id, 'price': cart.total}
+#                     make_request_to_target_service(data)
+#                     cart = cart_service.set_cart_status(user['id'])
+#                     return cart.__dict__
+#     except KeyError:
+#         raise HTTPException(404, f'Cart with {id} not found')
+
 @cart_router.post('/create_order')
-def create_order(cart_service: CartService = Depends(CartService), user: str = Header(...)) -> Cart:
-    user = eval(user)
+def create_order(cart_service: CartService = Depends(CartService)) -> Cart:
+    id = "801b87ac-6994-44b4-a65f-3fd7fdf3ca1b"
     try:
-        if user['id'] is not None:
-            if user['role'] == "Viewer" or user['role'] == "Customer":
-                cart = cart_service.get_cart_by_user(user['id'])
-                if cart:
-                    data = {'user_id': user['id'], 'cart': cart.id, 'price': cart.total}
-                    make_request_to_target_service(data)
-                    cart = cart_service.set_cart_status(user['id'])
-                    return cart.__dict__ 
+        cart = cart_service.get_cart_by_user(id)
+        if cart:
+            data = {'user_id': id, 'cart': cart.id, 'price': cart.total}
+            make_request_to_target_service(data)
+            cart = cart_service.set_cart_status(id)
+            return cart.dict()
     except KeyError:
         raise HTTPException(404, f'Cart with {id} not found')
