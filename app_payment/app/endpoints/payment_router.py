@@ -6,7 +6,7 @@ from app.models.create_payment_request import CreatePaymentRequest
 from app.services.payment_service import PaymentService
 from app.models.payment_model import Payment
 from app.rabbitmq import send_payment_message, send_payment_message_to_printing
-from app.settings import settings
+
 from opentelemetry import trace
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
@@ -16,6 +16,7 @@ from opentelemetry.exporter.jaeger.thrift import JaegerExporter
 from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 from opentelemetry.trace import Span, StatusCode
 from opentelemetry import context
+from app.settings import settings
 
 provider = TracerProvider()
 processor = BatchSpanProcessor(ConsoleSpanExporter())
@@ -77,6 +78,7 @@ def get_users_payments(payment_service: PaymentService = Depends(PaymentService)
                        user: str = Header(...)) -> list[Payment]:
     with tracer.start_as_current_span("Get users payments") as span:
         user = eval(user)
+        add_endpoint_info(span, "/get-user-payments")
         try:
             if user['id'] is not None:
                 if user['role'] == "Viewer" or user['role'] == "Customer":
