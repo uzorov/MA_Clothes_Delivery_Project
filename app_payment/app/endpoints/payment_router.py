@@ -6,7 +6,7 @@ from app.models.create_payment_request import CreatePaymentRequest
 from app.services.payment_service import PaymentService
 from app.models.payment_model import Payment
 from app.rabbitmq import send_payment_message, send_payment_message_to_printing
-
+from app.settings import settings
 from opentelemetry import trace
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
@@ -14,7 +14,6 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.sdk.trace.export import ConsoleSpanExporter
 from opentelemetry.exporter.jaeger.thrift import JaegerExporter
 from opentelemetry.sdk.resources import SERVICE_NAME, Resource
-
 from opentelemetry.trace import Span, StatusCode
 from opentelemetry import context
 
@@ -27,7 +26,8 @@ trace.set_tracer_provider(
     )
 )
 jaeger_exporter = JaegerExporter(
-    agent_host_name="192.168.1.36",
+    #!!!!!!Нужно поменять значение в .env
+    agent_host_name=settings.host_ip,
     agent_port=6831,
 )
 trace.get_tracer_provider().add_span_processor(
