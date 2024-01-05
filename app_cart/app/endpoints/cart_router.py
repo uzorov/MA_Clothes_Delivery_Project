@@ -58,7 +58,7 @@ def make_request_to_target_service(data):
     print("_________________MAKE REQ__________________")
     print(str(data))
     url = f"{target_service_url}/api/order/"
-    json_data = {'user_id': data['user_id'],'cart':data['cart'],'price':str(data['total'])}
+    json_data = {'user_id': str(data['user_id']),'cart':str(data['cart']),'price':str(data['total'])}
     with httpx.Client(timeout=30) as client:
         response = client.post(url, json=json_data)
     if response.status_code == 200:
@@ -138,7 +138,7 @@ def create_order(user: UUID, cart_service: CartService = Depends(CartService)) -
         print("Router--------------------------------------------------------")
         print(user)
         cart = cart_service.get_cart_by_user(user)
-        data = {'user_id': str(user), 'cart': str(cart.id), 'price': cart.total}
+        data = {'user_id': str(user), 'cart': str(cart.id), 'price': str(cart.total)}
         make_request_to_target_service(data)
         cart = cart_service.set_cart_status(user)
         return cart.dict()
