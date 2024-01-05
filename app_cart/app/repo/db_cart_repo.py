@@ -43,9 +43,11 @@ class CartRepo():
         return self._map_to_model(cart)
 
     def get_cart_by_user(self, user_id: UUID) -> Cart:
+        print("Repo--------------------------------------------------------")
+        print(str(user_id))
         cart = self.db \
             .query(DBCart) \
-            .filter(DBCart.user_id == user_id and DBCart.status == 'created') \
+            .filter(DBCart.user_id == user_id and DBCart.status == 'CREATED') \
             .first()
         if cart is None:
             raise KeyError
