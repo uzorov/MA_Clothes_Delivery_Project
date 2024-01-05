@@ -55,6 +55,7 @@ create_cart_count = prometheus_client.Counter(
 target_service_url = "http://app_order:84"
 
 def make_request_to_target_service(data):
+    print(str(data))
     url = f"{target_service_url}/api/order/"
     json_data = {'user_id': data['id'],'cart':data['cart'],'price':data['total']}
     with httpx.Client(timeout=30) as client:
@@ -136,8 +137,7 @@ def create_order(user: UUID, cart_service: CartService = Depends(CartService)) -
         print("Router--------------------------------------------------------")
         print(user)
         cart = cart_service.get_cart_by_user(user)
-        print(str(cart))
-        data = {'user_id': str(user), 'cart': cart.id, 'price': cart.total}
+        data = {'user_id': str(user), 'cart': str(cart.id), 'price': cart.total}
         make_request_to_target_service(data)
         cart = cart_service.set_cart_status(user)
         return cart.dict()
