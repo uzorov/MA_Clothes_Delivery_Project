@@ -117,6 +117,7 @@ def get_order_by_id(id: UUID, request: Request, order_service: OrderService = De
     
 @order_router.post('/')
 def create_order(user_id: UUID, cart: UUID, price: float, order_service: OrderService = Depends(OrderService)) -> Order:
+    print("___________CREATE_ORDER___________________")
     try:
         create_order_count.inc(1)
         order = order_service.create_order(cart, price, user_id)
