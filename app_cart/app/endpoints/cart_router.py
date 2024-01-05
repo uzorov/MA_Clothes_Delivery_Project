@@ -57,7 +57,7 @@ target_service_url = "http://app_order:84"
 def make_request_to_target_service(data):
     print(str(data))
     url = f"{target_service_url}/api/order/"
-    json_data = {'user_id': data['id'],'cart':data['cart'],'price':data['total']}
+    json_data = {'user_id': data['user_id'],'cart':data['cart'],'price':data['total']}
     with httpx.Client(timeout=30) as client:
         response = client.post(url,json=json_data)
     if response.status_code == 200:
