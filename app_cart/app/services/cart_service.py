@@ -20,6 +20,8 @@ class CartService():
         return self.cart_repo.get_cart(id)
 
     def get_cart_by_user(self, user_id: UUID):
+        print("Service--------------------------------------------------------")
+        print(str(user_id))
         return self.cart_repo.get_cart_by_user(user_id)
 
     def create_cart(self, obj:Item, user_id: UUID) -> Cart:

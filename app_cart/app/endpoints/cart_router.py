@@ -134,6 +134,8 @@ def create_or_update_cart(item: Item, cart_service: CartService = Depends(CartSe
 def create_order(cart_service: CartService = Depends(CartService)) -> Cart:
     id = "801b87ac-6994-44b4-a65f-3fd7fdf3ca1b"
     try:
+        print("Router--------------------------------------------------------")
+        print(id)
         cart = cart_service.get_cart_by_user(id)
 
         data = {'user_id': id, 'cart': cart.id, 'price': cart.total}
