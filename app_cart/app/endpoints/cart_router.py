@@ -58,14 +58,12 @@ def make_request_to_target_service(data):
     print("_________________MAKE REQ__________________")
     print(str(data))
     url = f"{target_service_url}/api/order/"
-    json_data = {'user_id': data['user_id'],'cart':data['cart'],'price':data['total']}
+    json_data = {'user_id': data['user_id'],'cart':data['cart'],'price':str(data['total'])}
     with httpx.Client(timeout=30) as client:
         response = client.post(url, json=json_data)
     if response.status_code == 200:
-        print(f"Nice making request: {response.status_code}")
         return response.status_code
     else:
-        print(f"Error making request: {response.status_code}, {response.text}")
         raise Exception(f"Error making request: {response.status_code}, {response.text}")
 
 @metrics_router.get('/metrics')
