@@ -55,6 +55,7 @@ create_cart_count = prometheus_client.Counter(
 target_service_url = "http://app_order:84"
 
 def make_request_to_target_service(data):
+    print("_________________MAKE REQ__________________")
     print(str(data))
     url = f"{target_service_url}/api/order/"
     json_data = {'user_id': data['user_id'],'cart':data['cart'],'price':data['total']}
@@ -63,6 +64,7 @@ def make_request_to_target_service(data):
     if response.status_code == 200:
         return response.status_code
     else:
+        print(f"Error making request: {response.status_code}, {response.text}")
         raise Exception(f"Error making request: {response.status_code}, {response.text}")
 
 @metrics_router.get('/metrics')
