@@ -116,7 +116,7 @@ def get_order_by_id(id: UUID, request: Request, order_service: OrderService = De
         raise HTTPException(404, f'Order with id={id} not found')
     
 @order_router.post('/')
-def create_order(user_id: UUID, cart: UUID, price: float, order_service: OrderService = Depends(OrderService)) -> Order:
+def create_order(user_id: UUID, cart: UUID, price: int, order_service: OrderService = Depends(OrderService)) -> Order:
     print("___________CREATE_ORDER___________________")
     try:
         create_order_count.inc(1)
