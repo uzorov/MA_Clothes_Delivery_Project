@@ -46,7 +46,7 @@ def make_request_to_target_service(item_id,size,count,price,name,cart_id):
         data = {"id": item_id, "size": size, "count": count, "price": price, "name": name,"cart_id": cart_id}
     else:
         data = {"id": item_id, "size": size, "count": count, "price": price, "name": name}
-    with httpx.AsyncClient(timeout=30) as client:
+    with httpx.Client(timeout=30) as client:
         response = client.post(url, json=data)
     if response.status_code == 200:
         return response.status_code
