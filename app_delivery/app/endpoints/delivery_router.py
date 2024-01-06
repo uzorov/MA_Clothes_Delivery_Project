@@ -5,6 +5,8 @@ from app.services.delivery_service import DeliveryService
 from app.models.delivery import Delivery, CreateDeliveryRequest
 import prometheus_client
 from fastapi import Response
+from app.rabbitmq import send_finish_delivery
+import asyncio
 
 from opentelemetry import trace
 from opentelemetry.sdk.resources import Resource
@@ -100,6 +102,7 @@ def activate_delivery(id: UUID, delivery_service: DeliveryService = Depends(Deli
 def finish_delivery(id: UUID, delivery_service: DeliveryService = Depends(DeliveryService)) -> Delivery:
     try:
         delivery = delivery_service.finish_delivery(id)
+        asyncio.run(send_finish_delivery(id))
         completed_delivery_count.inc(1)
         return delivery.dict()
     except KeyError:

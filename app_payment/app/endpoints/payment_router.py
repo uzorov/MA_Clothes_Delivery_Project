@@ -109,6 +109,21 @@ def create_payment(
             add_operation_result(span, f'Payment with id={payment_info.id} already exists')
             raise HTTPException(400, f'Payment with id={payment_info.id} already exists')
 
+@payment_router.put('/update_payment')
+def update_payment(
+        payment_info: CreatePaymentRequest,
+        payment_service: PaymentService = Depends(PaymentService)
+) -> Payment:
+    with tracer.start_as_current_span("Update payment") as span:
+        add_endpoint_info(span, "/update_payment/{id}")
+        try:
+            print("UPDATE PAYMENT:"+str(payment_info))
+            payment = payment_service.update_payment(payment_info.order_id, payment_info.sum)
+            add_operation_result(span, "success")
+            return payment.dict()
+        except KeyError:
+            add_operation_result(span, "failure")
+            raise HTTPException(404, f'payment with id={payment_info.id} not found')
 
 @payment_router.post('/{id}/process')
 def process_payment(

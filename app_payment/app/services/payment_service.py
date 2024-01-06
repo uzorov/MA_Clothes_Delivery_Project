@@ -23,6 +23,9 @@ class PaymentService:
         payment = Payment(id=uuid4(), user_id=user_id, receiver=receiver, sum=sum, order_id=order_id)
         return self.payment_repo.create_payment(payment)
 
+    def update_payment(self, order_id: UUID, sum:int) -> Payment:
+        return self.payment_repo.update_payment(order_id, sum)
+
     def process_payment(self, payment_id: UUID) -> str:
         return self.payment_repo.process_payment(payment_id)
 

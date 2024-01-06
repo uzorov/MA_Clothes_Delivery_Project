@@ -76,6 +76,7 @@ class OrderRepo():
         try:
             db_order = self.db.query(DBOrder).filter(DBOrder.id == order.id).first()
             db_order.discount = order.discount
+            db_order.price = order.price
             self.db.commit()
             return self._map_to_model(db_order)
         except:

@@ -31,8 +31,10 @@ class OrderService():
 
     def set_discount(self, id: UUID, discount: float) -> Order:
         order = self.order_repo.get_order_by_id(id)
+        new_price = order.price * discount
         if order.status == OrderStatuses.CREATED:
             order.discount = discount
+            order.price = new_price
             return self.order_repo.set_discount(order)
         raise ValueError
 

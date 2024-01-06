@@ -56,6 +56,14 @@ class PaymentRepo:
             raise KeyError(f"Payment with id {payment_id} not found.")
         return self._map_to_model(payment)
 
+    def update_payment(self, order_id:UUID, sum:int) -> Payment:
+        db_payment = self.db.query(DBPayment).filter(
+            DBPayment.order_id == order_id).first()
+        db_payment.sum = sum
+        self.db.commit()
+        return self._map_to_model(db_payment)
+
+
     def process_payment(self, payment_id: UUID) -> str:
         try:
             payment = self.get_payment_by_id(payment_id)
