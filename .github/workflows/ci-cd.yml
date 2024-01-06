@@ -194,9 +194,9 @@ jobs:
           sudo apt install -y python3-pip
           pip install -r ./app_promocode/requirements.txt
 
-#      - name: Run unit tests
-#        run: |
-#          pytest ./app_promocode/test/unit
+      - name: Run unit tests
+        run: |
+          pytest ./app_promocode/test/unit
 
       - name: Prepare integration tests
         run: |
