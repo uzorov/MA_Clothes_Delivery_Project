@@ -42,6 +42,6 @@ class CartService():
         return self.cart_repo.update_cart(cart)
     
     def set_cart_status(self, user_id:UUID):
-        cart = self.get_cart_by_user(user_id)
+        cart = self.cart_repo.get_cart_by_user(user_id)
         cart.status = CartStatuses.IN_ORDER
         return self.cart_repo.update_cart(cart)

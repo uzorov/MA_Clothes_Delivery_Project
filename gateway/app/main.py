@@ -20,6 +20,7 @@ MICROSERVICES = {
     "order": "http://192.168.1.92:84/api",
     "promocode": "http://192.168.1.92:85/api",
     "item": "http://192.168.1.92:83/api",
+    "cart": "http://192.168.1.92:86/api"
 }
 
 class dropdownChoices(str, Enum):
@@ -91,3 +92,18 @@ def post_item_to_cart(
     else:
         return proxy_request(service_name="item", path=f"/item/add_to_cart?item_id={item_id}&size={str(size.value)}&count={count}", user_info=current_user, request=request)
     
+@app.get('/cart/')
+def get_cart_by_user_id(request: Request, current_user: dict = Depends(get_user_role)):
+    if current_user['id'] == '':
+        request.session['prev_url'] = str(request.url)
+        return RedirectResponse(url=f"http://127.0.0.1:8000/auth/login")
+    else:
+        return proxy_request(service_name="cart", path=f"/cart/", user_info=current_user, request=request)
+    
+@app.post('/cart/create_order')
+def create_order(request: Request, current_user: dict = Depends(get_user_role)):
+    if current_user['id'] == '':
+        request.session['prev_url'] = str(request.url)
+        return RedirectResponse(url=f"http://127.0.0.1:8000/auth/login")
+    else:
+        return proxy_request(service_name="cart", path=f"/cart/create_order", user_info=current_user, request=request)

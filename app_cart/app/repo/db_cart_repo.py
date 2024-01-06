@@ -6,7 +6,7 @@ import logging
 
 from fastapi import APIRouter, Depends, HTTPException, Body
 from app.database import get_db
-from app.models.cart import Cart
+from app.models.cart import Cart, CartStatuses
 from app.schemas.cart import Cart as DBCart
 import logging
 
@@ -47,10 +47,10 @@ class CartRepo():
         print(str(user_id))
         cart = self.db \
             .query(DBCart) \
-            .filter(DBCart.user_id == user_id and DBCart.status == "CREATED") \
+            .filter((DBCart.user_id == user_id) & (DBCart.status == CartStatuses.CREATED)) \
             .first()
         if cart is None:
-            return None
+            raise HTTPException(status_code=204)
         return self._map_to_model(cart)
 
 
@@ -69,6 +69,7 @@ class CartRepo():
             db_cart = self.db.query(DBCart).filter(DBCart.id == cart.id).first()
             db_cart.total = cart.total
             db_cart.items = cart.items
+            db_cart.status = cart.status
             self.db.commit()
             return self.db.query(DBCart).filter(DBCart.id == cart.id).first()
         except:
