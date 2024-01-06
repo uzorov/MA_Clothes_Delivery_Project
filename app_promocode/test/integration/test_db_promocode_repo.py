@@ -10,19 +10,14 @@ def promocode_repo() -> PromocodeRepo:
 
 
 @pytest.fixture(scope='session')
-def first_promocode() -> Promocode:
-    return Promocode(id=uuid4(), code="TESTCODE1", discount=0.10)
-
-@pytest.fixture(scope='session')
-def second_promocode() -> Promocode:
-    return Promocode(id=uuid4(), code="ANOTHERCODE", discount=0.20)
-
+def promocode() -> Promocode:
+    return Promocode(id=uuid4(), code="TESTCODE", discount=0.10)
 
 def test_empty_list(promocode_repo: PromocodeRepo) -> None:
     assert promocode_repo.get_promocodes() == []
 
-def test_add_first_promocode(first_promocode: Promocode, promocode_repo: PromocodeRepo) -> None:
-    created_promocode=promocode_repo.create_promocode(first_promocode.code, first_promocode.discount)
-    assert created_promocode.code == first_promocode.code
+def test_add_promocode(promocode: Promocode, promocode_repo: PromocodeRepo) -> None:
+    created_promocode=promocode_repo.create_promocode(promocode.code, promocode.discount)
+    assert created_promocode.code == promocode.code
 
 
