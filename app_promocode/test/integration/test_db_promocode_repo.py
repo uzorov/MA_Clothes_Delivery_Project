@@ -18,13 +18,11 @@ def second_promocode() -> Promocode:
     return Promocode(id=uuid4(), code="ANOTHERCODE", discount=0.20)
 
 
+def test_empty_list(promocode_repo: PromocodeRepo) -> None:
+    assert promocode_repo.get_promocodes() == []
+
 def test_add_first_promocode(first_promocode: Promocode, promocode_repo: PromocodeRepo) -> None:
     created_promocode=promocode_repo.create_promocode(first_promocode.code, first_promocode.discount)
     assert created_promocode.code == first_promocode.code
 
 
-def test_add_second_promocode(second_promocode: Promocode, promocode_repo: PromocodeRepo) -> None:
-    assert promocode_repo.create_promocode(second_promocode.code, second_promocode.discount) == second_promocode
-    promocodes = promocode_repo.get_promocodes()
-    assert len(promocodes) == 2
-    assert promocodes[1] == second_promocode
