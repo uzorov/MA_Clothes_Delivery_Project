@@ -31,6 +31,9 @@ class OrderService():
 
     def set_discount(self, id: UUID, discount: float) -> Order:
         order = self.order_repo.get_order_by_id(id)
+        print("SET DISCOUNT________________________________________")
+        print(str(discount))
+        print(str(1-discount))
         new_price = order.price * (1-discount)
         if order.status == OrderStatuses.CREATED:
             order.discount = discount
