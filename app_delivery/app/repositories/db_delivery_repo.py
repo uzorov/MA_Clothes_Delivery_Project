@@ -23,6 +23,9 @@ class DeliveryRepo():
         data = dict(delivery)
         result = DBDelivery(**data)
         return result
+    
+    def get_delivery_by_id(self, id: UUID) -> Delivery:
+        return self.db.query(DBDelivery).filter(DBDelivery.id == id).first()
 
     def get_deliveries(self) -> list[Delivery]:
         deliveries = []

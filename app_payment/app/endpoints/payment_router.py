@@ -82,12 +82,12 @@ def get_users_payments(payment_service: PaymentService = Depends(PaymentService)
         try:
             if user['id'] is not None:
                 if user['role'] == "Viewer" or user['role'] == "Customer":
-                    result = payment_service.get_users_payments(user['id'])
+                    result = payment_service.get_user_payments(user['id'])
                     add_operation_result(span, "success")
                     return result
         except KeyError:
             add_operation_result(span, "failure")
-            raise HTTPException(404, f'Order with id={id} not found')
+            raise HTTPException(404, f'Order with user {user["id"]} not found')
 
 
 @payment_router.post('/')

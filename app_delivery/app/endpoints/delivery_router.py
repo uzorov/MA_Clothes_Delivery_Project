@@ -1,5 +1,5 @@
 from uuid import UUID
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Header
 
 from app.services.delivery_service import DeliveryService
 from app.models.delivery import Delivery, CreateDeliveryRequest
@@ -65,11 +65,25 @@ cancelled_delivery_count = prometheus_client.Counter(
 )
 
 
-@delivery_router.get('/')
+@delivery_router.get('/all')
 def get_deliveries(delivery_service: DeliveryService = Depends(DeliveryService)) -> list[Delivery]:
     with tracer.start_as_current_span("Get deliveries"):
         get_deliveries_count.inc(1)
         return delivery_service.get_deliveries()
+    
+
+@delivery_router.get('/{id}')
+def get_delivery_by_id(id: UUID, delivery_service: DeliveryService = Depends(DeliveryService), user: str = Header(...)) -> Delivery:
+    user = eval(user)
+    with tracer.start_as_current_span("Get deliveries"):
+        try:
+            if user['id'] is not None:
+                if user['role'] == "Viewer" or user['role'] == "Customer":
+                    get_deliveries_count.inc(1)
+                    return delivery_service.get_delivery_by_id(id)
+        except KeyError:
+            raise HTTPException(404, f'Delivery with {id} not found')
+        return 
 
 
 @delivery_router.post('/')

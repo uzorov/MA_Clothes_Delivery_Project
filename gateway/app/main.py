@@ -20,7 +20,10 @@ MICROSERVICES = {
     "order": "http://192.168.1.92:84/api",
     "promocode": "http://192.168.1.92:85/api",
     "item": "http://192.168.1.92:83/api",
-    "cart": "http://192.168.1.92:86/api"
+    "cart": "http://192.168.1.92:86/api",
+    "printing": "http://192.168.1.92:81/api",
+    "payment": "http://192.168.1.92:82/api",
+    "delivery": "http://192.168.1.92:80/api"
 }
 
 class dropdownChoices(str, Enum):
@@ -107,3 +110,47 @@ def create_order(request: Request, current_user: dict = Depends(get_user_role)):
         return RedirectResponse(url=f"http://127.0.0.1:8000/auth/login")
     else:
         return proxy_request(service_name="cart", path=f"/cart/create_order", user_info=current_user, request=request)
+    
+
+@app.get('/payment/get-user-payments')
+def get_user_payments(request: Request, current_user: dict = Depends(get_user_role)):
+    if current_user['id'] == '':
+        request.session['prev_url'] = str(request.url)
+        return RedirectResponse(url=f"http://127.0.0.1:8000/auth/login")
+    else:
+        return proxy_request(service_name="payment", path=f"/payments/get-user-payments", user_info=current_user, request=request)
+    
+
+@app.post('/payment/{id}/process')
+def process_payment(id: UUID, request: Request, current_user: dict = Depends(get_user_role)):
+    if current_user['id'] == '':
+        request.session['prev_url'] = str(request.url)
+        return RedirectResponse(url=f"http://127.0.0.1:8000/auth/login")
+    else:
+        return proxy_request(service_name="payment", path=f"/payments/{id}/process", user_info=current_user, request=request)
+    
+
+@app.get('/delivery/{id}')
+def get_delivery_by_id(id:UUID, request: Request, current_user: dict = Depends(get_user_role)):
+    if current_user['id'] == '':
+        request.session['prev_url'] = str(request.url)
+        return RedirectResponse(url=f"http://127.0.0.1:8000/auth/login")
+    else:
+        return proxy_request(service_name="delivery", path=f"/delivery/{id}", user_info=current_user, request=request)
+
+@app.post('/delivery/{id}/choose_pickup')
+def choose_pickup(id: UUID, request: Request, current_user: dict = Depends(get_user_role)):
+    if current_user['id'] == '':
+        request.session['prev_url'] = str(request.url)
+        return RedirectResponse(url=f"http://127.0.0.1:8000/auth/login")
+    else:
+        return proxy_request(service_name="delivery", path=f"/delivery/{id}/choose_pickup", user_info=current_user, request=request)
+
+
+@app.post('/delivery/{id}/choose_delivery')
+def choose_delivery(id: UUID, request: Request, current_user: dict = Depends(get_user_role)):
+    if current_user['id'] == '':
+        request.session['prev_url'] = str(request.url)
+        return RedirectResponse(url=f"http://127.0.0.1:8000/auth/login")
+    else:
+        return proxy_request(service_name="delivery", path=f"/delivery/{id}/choose_delivery", user_info=current_user, request=request)

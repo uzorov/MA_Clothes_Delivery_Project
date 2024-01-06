@@ -78,9 +78,15 @@ def make_request_to_delivery_service(id):
     else:
         raise Exception(f"Error making request to delivery: {response.status_code}, {response.text}")
 
-@printing_router.get('/')
+@printing_router.get('/all')
 def get_printings(printing_service: PrintingService = Depends(PrintingService)) -> list[Printing]:
     with tracer.start_as_current_span("Get printings"):
+        get_printings_count.inc(1)
+        return printing_service.get_printings()
+
+@printing_router.get('/')
+def get_printings(printing_service: PrintingService = Depends(PrintingService)) -> list[Printing]:
+    with tracer.start_as_current_span("Get users printings"):
         get_printings_count.inc(1)
         return printing_service.get_printings()
 

@@ -131,14 +131,17 @@ def get_cart_by_id(cart_service: CartService = Depends(CartService), user: str =
 @cart_router.post('/')
 def create_or_update_cart(item: Item, cart_service: CartService = Depends(CartService), user: str = Header(...)) -> Cart:
     user = eval(user)
+    print('____________________uaaaaaaaaaaaaaaaaaaaaaaa_______________')
     try:
         if user['id'] is not None:
+            print('1')
             if user['role'] == "Viewer" or user['role'] == "Customer":
                 print(cart_service.get_cart_by_user(user['id']))
                 if cart_service.get_cart_by_user(user['id']):
                     create_cart_count.inc(1)
                     cart = cart_service.update_cart(user['id'], item)
                     return cart.__dict__
+                print('2')
                 cart = cart_service.create_cart(item, user['id'])
                 return cart.dict()
     except Exception as e:
