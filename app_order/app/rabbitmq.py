@@ -33,10 +33,10 @@ async def process_discount(msg: IncomingMessage):
         logging.info(data)
         id = UUID(data['id'])
         discount = data['discount']
-        print("DISCOUNT: "+discount+" ID: "+id)
+        print("DISCOUNT: " + str(discount) + " ID: " + str(id))
         order_service = OrderService(OrderRepo())
         order = order_service.set_discount(id, discount)
-        print("ORDER:"+str(order.dict()))
+        print("ORDER:" + str(order.dict()))
         make_request_to_payment_service(order.dict())
     except:
         traceback.print_exc()
