@@ -41,7 +41,7 @@ def get_promocode(code: str, promocode_service: PromocodeService = Depends(Promo
         return promocode_service.get_promocode(code)
 
 @promocode_router.get('/')
-def get_promocode(promocode_service: PromocodeService = Depends(PromocodeService)) -> list[Promocode]:
+def get_promocodes(promocode_service: PromocodeService = Depends(PromocodeService)) -> list[Promocode]:
     with tracer.start_as_current_span("Get promocodes"):
         return promocode_service.get_promocodes()
 

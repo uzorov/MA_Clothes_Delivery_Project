@@ -128,35 +128,42 @@ def get_cart_by_id(cart_service: CartService = Depends(CartService), user: str =
             raise HTTPException(404, f'Cart with id={id} not found')
 
 
-# @cart_router.post('/')
-# def create_or_update_cart(item: Item, cart_service: CartService = Depends(CartService), user: str = Header(...)) -> Cart:
-#     user = eval(user)
-#     try:
-#         if user['id'] is not None:
-#             if user['role'] == "Viewer" or user['role'] == "Customer":
-#                 if cart_service.get_cart_by_user(user['id']):
-#                     create_cart_count.inc(1)
-#                     cart = cart_service.update_cart(user['id'], item)
-#                     return cart.__dict__
-#                 cart = cart_service.create_cart(item, user['id'])
-#                 return cart.dict()
-#     except KeyError:
-#         raise HTTPException(404, f'Cart with {id} not found')
+@cart_router.post('/')
+def create_or_update_cart(item: Item, cart_service: CartService = Depends(CartService), user: str = Header(...)) -> Cart:
+    user = eval(user)
+    print('вывод item ______________________________________')
+    print(item)
+    try:
+        if user['id'] is not None:
+            print('1')
+            if user['role'] == "Viewer" or user['role'] == "Customer":
+                print(cart_service.get_cart_by_user(user['id']))
+                if cart_service.get_cart_by_user(user['id']):
+                    print('3')
+                    create_cart_count.inc(1)
+                    cart = cart_service.update_cart(user['id'], item)
+                    return cart.__dict__
+                print('4')
+                cart = cart_service.create_cart(item, user['id'])
+                return cart.dict()
+    except Exception as e:
+        raise HTTPException(404, f'{e}')
 
 
 # NEXT FUN IS FOR TEST ONLY, IN PROD WE'LL USE FUN ABOVE
-@cart_router.post('/')
-def create_or_update_cart(item: Item, cart_service: CartService = Depends(CartService)) -> Cart:
-    id = "801b87ac-6994-44b4-a65f-3fd7fdf3ca1b"
-    with tracer.start_as_current_span("Create or update cart") as span:
-        add_endpoint_info(span, "/")
-        try:
-            cart = cart_service.create_cart(item, id)
-            add_operation_result(span, "success")
-            return cart.dict()
-        except KeyError:
-            add_operation_result(span, "failure")
-            raise HTTPException(404, f'Cart with {id} not found')
+# @cart_router.post('/')
+# def create_or_update_cart(item: Item, cart_service: CartService = Depends(CartService), user: str =  Header(...)) -> Cart:
+#     id = "801b87ac-6994-44b4-a65f-3fd7fdf3ca1b"
+#     user = eval(user)
+#     with tracer.start_as_current_span("Create or update cart") as span:
+#         add_endpoint_info(span, "/")
+#         try:
+#             cart = cart_service.create_cart(item, id)
+#             add_operation_result(span, "success")
+#             return cart.dict()
+#         except KeyError:
+#             add_operation_result(span, "failure")
+#             raise HTTPException(404, f'Cart with {id} not found')
 
 
 # @cart_router.post('/create_order')

@@ -1,6 +1,6 @@
 from uuid import UUID
 import asyncio
-from fastapi import APIRouter, Depends, HTTPException, Body, Query, Form
+from fastapi import APIRouter, Depends, HTTPException, Header
 from typing import Optional, List
 from app.services.item_service import ItemService
 from app.models.item import Item
@@ -60,26 +60,29 @@ def add_operation_result(span: Span, result: str) -> None:
 
 
 item_router = APIRouter(prefix='/item', tags=['Item'])
-target_service_url = "http://app_cart:86"
+target_service_url = "http://192.168.1.92:86"
 
 
-def make_request_to_target_service(item_id, size, count, price, name):
+def make_request_to_target_service(item_id, size, count, price, name, user):
     url = f"{target_service_url}/api/cart/"
+    headers = {
+        'user': str(user)
+    }
     data = {"id": item_id, "size": size, "count": count, "price": price, "name": name}
     print(str(data))
     with httpx.Client(timeout=30) as client:
-        response = client.post(url, json=data)
+        response = client.post(url, json=data, headers=headers)
     if response.status_code == 200:
         return response.status_code
     else:
         raise Exception(f"Error making request:{response.status_code}, {response.text}")
 
 
-class dropdownChoices(str, Enum):
-    xs = "xs"
-    s = "s"
-    m = "m"
-    l = "l"
+# class dropdownChoices(str, Enum):
+#     xs = "xs"
+#     s = "s"
+#     m = "m"
+#     l = "l"
 
 
 @item_router.get('/')
@@ -125,14 +128,15 @@ def create_item(
 def add_to_cart(
         item_id: str,
         count: int,
-        size: dropdownChoices = Form(dropdownChoices),
+        size: str,
         item_service: ItemService = Depends(ItemService),
+        user: str = Header(...),
 ) -> Item:
     with tracer.start_as_current_span("Add to cart") as span:
         add_endpoint_info(span, "/add_to_cart")
         try:
             item = item_service.get_items_by_id(item_id)
-            make_request_to_target_service(item_id, size, count, item.price, item.name)
+            make_request_to_target_service(item_id, size, count, item.price, item.name, user)
             add_operation_result(span, "success")
             return item
         except KeyError:
