@@ -24,28 +24,13 @@ def design_repo() -> DesignRepo:
     return design_repo
 
 
-@pytest.fixture(scope='session')
-def first_design() -> Design:
-    id = uuid4()
-    image_url = "https://test/design/1"
-
-    return Design(id=id, image_url=image_url)
-
-
-@pytest.fixture(scope='session')
-def second_design() -> Design:
-    id = uuid4()
-    image_url = "https://test/design/2"
-
-    return Design(id=id, image_url=image_url)
-
 
 @pytest.fixture(scope='session')
 def first_item() -> Item:
     id = uuid4()
     name = "Футболка 1"
     price = 399
-    design = first_design()
+    design = "https://test/design/1"
 
     return Item(id=id, name=name, price=price, design=design)
 
@@ -55,7 +40,7 @@ def second_item() -> Item:
     id = uuid4()
     name = "Футболка 2"
     price = 584
-    design = second_design()
+    design = "https://test/design/2"
 
     return Item(id=id, name=name, price=price, design=design)
 
