@@ -24,8 +24,7 @@ def test_add_first_promocode(first_promocode: Promocode, promocode_repo: Promoco
 
 
 def test_add_second_promocode(second_promocode: Promocode, promocode_repo: PromocodeRepo) -> None:
-    created_promocode = promocode_repo.create_promocode(second_promocode.code, second_promocode.discount)
-    assert created_promocode.code == second_promocode.code
+    assert promocode_repo.create_promocode(second_promocode.code, second_promocode.discount) == second_promocode
     promocodes = promocode_repo.get_promocodes()
     assert len(promocodes) == 2
     assert promocodes[1] == second_promocode

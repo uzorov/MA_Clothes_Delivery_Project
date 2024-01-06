@@ -54,7 +54,7 @@ def test_add_first_item(first_item: Item, item_repo: ItemRepo) -> None:
 
 
 def test_get_item_by_id(first_item: Item, item_repo: ItemRepo) -> None:
-    item = item_repo.get_books()[0]
+    item = item_repo.get_items()[0]
     item_by_id = item_repo.get_item_by_id(item.id)
     assert item.id == item_by_id.id
 
@@ -65,7 +65,7 @@ def test_get_item_by_id_error(item_repo: ItemRepo) -> None:
 
 
 def test_add_second_item(first_item: Item, second_item: Item, item_repo: ItemRepo) -> None:
-    assert item_repo.add_item(second_item) == second_item
+    assert item_repo.create_item(second_item) == second_item
     items = item_repo.get_items()
     assert items[len(items) - 1] == second_item
 
