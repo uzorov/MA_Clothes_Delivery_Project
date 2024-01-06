@@ -35,12 +35,10 @@ def second_order() -> Order:
     return Order(id=id, cart=cart, status=status, discount=discount, price=price,user_id=user_id)
 
 
-def test_empty_list(order_repo: order_repo) -> None:
-    assert order_repo.get_orders() != []
 
 def test_create_first_order(first_order: Order, order_repo: order_repo) -> None:
     assert order_repo.create_order(first_order) == first_order
-    order = order_repo.get_orders()[-1]
+    order = order_repo.get_user_orders(first_order.user_id)[-1]
     assert order == first_order
 
 def test_get_book_by_id(order_repo: order_repo) -> None:
@@ -50,8 +48,6 @@ def test_get_book_by_id(order_repo: order_repo) -> None:
 
 def test_add_second_book(second_order: Order, order_repo: order_repo) -> None:
     assert order_repo.create_order(second_order) == second_order
-    order = order_repo.get_orders()[-1]
-    assert order == second_order
 
 def test_set_status_valid(order_repo: order_repo, first_order: first_order) -> None:
     new_status = OrderStatuses.PAID

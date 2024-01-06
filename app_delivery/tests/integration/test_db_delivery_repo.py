@@ -20,12 +20,12 @@ def delivery_id() -> UUID:
 
 @pytest.fixture(scope='session')
 def first_delivery() -> Delivery:
-    return Delivery(id=uuid4(), date=datetime.now(), status=DeliveryStatuses.CREATED, type=DeliveryTypes.STANDARD)
+    return Delivery(id=uuid4(), date=datetime.now(), status=DeliveryStatuses.CREATED, type=DeliveryTypes.PICKUP)
 
 
 @pytest.fixture(scope='session')
 def second_delivery() -> Delivery:
-    return Delivery(id=uuid4(), date=datetime.now(), status=DeliveryStatuses.CREATED, type=DeliveryTypes.EXPRESS)
+    return Delivery(id=uuid4(), date=datetime.now(), status=DeliveryStatuses.CREATED, type=DeliveryTypes.DELIVERY)
 
 
 def test_empty_list(delivery_repo: DeliveryRepo) -> None:

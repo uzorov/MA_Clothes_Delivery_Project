@@ -15,7 +15,7 @@ def first_promocode() -> Promocode:
 
 @pytest.fixture(scope='session')
 def second_promocode() -> Promocode:
-    return Promocode(id=uuid4(), code="TESTCODE2", discount=0.20)
+    return Promocode(id=uuid4(), code="TESTCODE3", discount=0.20)
 
 
 def test_add_first_promocode(first_promocode: Promocode, promocode_repo: PromocodeRepo) -> None:

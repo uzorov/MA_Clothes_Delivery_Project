@@ -228,10 +228,10 @@ jobs:
           sudo apt update
           sudo apt install -y python3-pip
           pip install -r ./app_cart/requirements.txt
-#
-#      - name: Run unit tests
-#        run: |
-#          pytest ./app_cart/tests/unit
+
+      - name: Run unit tests
+        run: |
+          pytest ./app_cart/tests/unit
 
       - name: Prepare integration tests
         run: |

@@ -61,7 +61,7 @@ def second_item() -> Item:
 
 
 def test_empty_list(item_repo: ItemRepo) -> None:
-    assert item_repo.get_items() != []
+    assert item_repo.get_items() == []
 
 
 def test_add_first_item(first_item: Item, item_repo: ItemRepo) -> None:
