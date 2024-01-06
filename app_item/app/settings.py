@@ -20,8 +20,5 @@ class Settings(BaseSettings):
     postgres_url: str = os.getenv("POSTGRES_URL_ITEM")
     print(f"\n\n POSTGRES_URL: {postgres_url}\n\n")
 
-    host_ip: str = os.getenv("HOST_IP")
-    print(f"\n\n HOST_IP: {host_ip}\n\n")
-
 
 settings = Settings()
