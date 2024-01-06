@@ -43,6 +43,6 @@ def test_get_existing_item(item_repo: ItemRepo, second_item) -> None:
 
 def test_create_duplicate_item(item_repo: ItemRepo, first_item) -> None:
     with pytest.raises(ValueError):
-        item_repo.create_item(first_item.name, first_item.price)
+        item_repo.create_item(first_item.name, first_item.price,first_item.design)
 
 
