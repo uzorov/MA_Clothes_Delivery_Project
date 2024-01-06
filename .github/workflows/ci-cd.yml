@@ -35,9 +35,9 @@ jobs:
           AMQP_URL: amqp://guest:guest@actual_pr678-rabbitmq-1:5672/
           POSTGRES_URL: postgresql://postgres:krya@localhost:5432/postgres
 
-#      - name: Run integration tests
-#        run: |
-#          pytest ./app_printing/tests/integration
+      - name: Run integration tests
+        run: |
+          pytest ./app_printing/tests/integration
 
   test-app-delivery:
     name: Run app_delivery tests
@@ -68,9 +68,9 @@ jobs:
           AMQP_URL: amqp://guest:guest@actual_pr678-rabbitmq-1:5672/
           POSTGRES_URL: postgresql://postgres:krya@localhost:5432/postgres
 
-#      - name: Run integration tests
-#        run: |
-#          pytest ./app_delivery/tests/integration
+      - name: Run integration tests
+        run: |
+          pytest ./app_delivery/tests/integration
 
   test-app-payment:
     name: Run app_payment tests
@@ -101,9 +101,9 @@ jobs:
           AMQP_URL: amqp://guest:guest@actual_pr678-rabbitmq-1:5672/
           POSTGRES_URL: postgresql://postgres:krya@localhost:5432/postgres
 
-#      - name: Run integration tests
-#        run: |
-#          pytest ./app_payment/tests/integration
+      - name: Run integration tests
+        run: |
+          pytest ./app_payment/tests/integration
 
   test-app-order:
     name: Run app_order tests
@@ -134,9 +134,9 @@ jobs:
           AMQP_URL: amqp://guest:guest@actual_pr678-rabbitmq-1:5672/
           POSTGRES_URL: postgresql://postgres:krya@localhost:5432/postgres
 
-#      - name: Run integration tests
-#        run: |
-#          pytest ./app_order/tests/integration
+      - name: Run integration tests
+        run: |
+          pytest ./app_order/tests/integration
 
   test-app-item:
     name: Run app_item tests
@@ -167,9 +167,9 @@ jobs:
           AMQP_URL: amqp://guest:guest@actual_pr678-rabbitmq-1:5672/
           POSTGRES_URL: postgresql://postgres:krya@localhost:5432/postgres
 
-#      - name: Run integration tests
-#        run: |
-#          pytest ./app_item/tests/integration
+      - name: Run integration tests
+        run: |
+          pytest ./app_item/tests/integration
 
   test-app-promocode:
     name: Run app_promocode tests
@@ -200,9 +200,9 @@ jobs:
           AMQP_URL: amqp://guest:guest@actual_pr678-rabbitmq-1:5672/
           POSTGRES_URL: postgresql://postgres:krya@localhost:5432/postgres
 
-#      - name: Run integration tests
-#        run: |
-#          pytest ./app_promocode/test/integration
+      - name: Run integration tests
+        run: |
+          pytest ./app_promocode/test/integration
 
   test-app-cart:
     name: Run app_cart tests
@@ -233,9 +233,9 @@ jobs:
           AMQP_URL: amqp://guest:guest@actual_pr678-rabbitmq-1:5672/
           POSTGRES_URL: postgresql://postgres:krya@localhost:5432/postgres
 
-#      - name: Run integration tests
-#        run: |
-#          pytest ./app_cart/tests/integration
+      - name: Run integration tests
+        run: |
+          pytest ./app_cart/tests/integration
 
 
 
