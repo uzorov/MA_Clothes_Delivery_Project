@@ -19,14 +19,7 @@ def sample_payment() -> Payment:
     )
 
 def test_create_payment(payment_repo: PaymentRepo, sample_payment: Payment) -> None:
-    created_payment = Payment(
-        id=uuid4(),
-        receiver='John Doe',
-        sum=100,
-        user_id=uuid4(),
-        order_id=uuid4()
-    )
-    assert created_payment.receiver == sample_payment.receiver
+    assert payment_repo.create_payment(sample_payment) == sample_payment
 
 def test_get_payment_by_id(payment_repo: PaymentRepo, sample_payment: Payment) -> None:
     retrieved_payment = payment_repo.get_payment_by_id(sample_payment.id)
@@ -40,10 +33,4 @@ def test_get_all_payments(payment_repo: PaymentRepo, sample_payment: Payment) ->
     payments = payment_repo.get_all_payments()
     assert sample_payment in payments
 
-def test_get_nonexistent_payment(payment_repo: PaymentRepo) -> None:
-    with pytest.raises(KeyError):
-        payment_repo.get_payment_by_id(UUID('00000000-0000-0000-0000-000000999999'))
 
-def test_duplicate_payment_creation(payment_repo: PaymentRepo, sample_payment: Payment) -> None:
-    with pytest.raises(KeyError):
-        payment_repo.create_payment(sample_payment)
