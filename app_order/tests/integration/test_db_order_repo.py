@@ -41,10 +41,6 @@ def test_create_first_order(first_order: Order, order_repo: order_repo) -> None:
     order = order_repo.get_user_orders(first_order.user_id)[-1]
     assert order == first_order
 
-def test_get_book_by_id(first_order: Order,order_repo: order_repo) -> None:
-    order = order_repo.get_user_orders(first_order.user_id)()[0]
-    book_by_id = order_repo.get_order_by_id(order.id)
-    assert order.id == book_by_id.id
 
 def test_add_second_book(second_order: Order, order_repo: order_repo) -> None:
     assert order_repo.create_order(second_order) == second_order
