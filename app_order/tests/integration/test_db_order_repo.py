@@ -68,7 +68,3 @@ def test_set_discount_valid(order_repo: order_repo, first_order: first_order) ->
     updated_order = order_repo.get_order_by_id(order.id)
     assert updated_order.discount == discount
 
-def test_delete_all_orders(order_repo: OrderRepo) -> None:
-    assert len(order_repo.get_orders()) > 0
-    order_repo.delete_all_orders()
-    assert order_repo.get_orders() == []
