@@ -39,9 +39,6 @@ class PromocodeRepo():
             self.db.add(db_promocode)
             self.db.commit()
             return self._map_to_model(db_promocode)
-        except IntegrityError as e:
-            self.db.rollback()
-            raise ValueError(f"Promocode with code '{code}' already exists") from e
         except Exception as e:
             self.db.rollback()
             traceback.print_exc()
