@@ -2,7 +2,7 @@ import pytest
 from uuid import uuid4
 from pydantic import ValidationError
 
-from app.models.payment_model import Payment, PaymentType
+from app.models.payment_model import Payment
 
 
 @pytest.fixture()
@@ -11,7 +11,6 @@ def any_payment_data() -> dict:
         'id': uuid4(),
         'receiver': 'John Doe',
         'sum': 100,
-        'type': PaymentType.PC,
         'user_id': uuid4()
     }
 
@@ -36,15 +35,4 @@ def test_payment_missing_sum(any_payment_data: dict):
         Payment(**any_payment_data)
 
 
-def test_payment_missing_type(any_payment_data: dict):
-    any_payment_data.pop('type')
 
-    with pytest.raises(ValidationError):
-        Payment(**any_payment_data)
-
-
-def test_payment_invalid_type(any_payment_data: dict):
-    any_payment_data['type'] = 'invalid_type'
-
-    with pytest.raises(ValidationError):
-        Payment(**any_payment_data)

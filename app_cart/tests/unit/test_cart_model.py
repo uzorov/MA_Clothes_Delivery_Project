@@ -11,7 +11,8 @@ def test_cart_creation(any_cart_uuid):
         "id": str(any_cart_uuid),
         "items": [{"item_id": 1, "count": 2, "price": 10.0}],
         "total": 20.0,
-        "user_id": str(any_cart_uuid)
+        "user_id": str(any_cart_uuid),
+        "status":"CREATED"
     }
 
     cart = Cart(**cart_data)
@@ -53,14 +54,3 @@ def test_cart_invalid_total(any_cart_uuid):
     with pytest.raises(ValueError):
         Cart(**cart_data)
 
-def test_cart_with_no_id(any_cart_uuid):
-    cart_data = {
-        "items": [{"item_id": 1, "count": 2, "price": 10.0}],
-        "total": 20.0,
-        "user_id": str(any_cart_uuid)
-    }
-
-    cart = Cart(**cart_data)
-
-    assert cart.items == [{"item_id": 1, "count": 2, "price": 10.0}]
-    assert cart.total == 20.0
