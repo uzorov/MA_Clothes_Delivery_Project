@@ -14,7 +14,8 @@ def sample_payment() -> Payment:
         id=uuid4(),
         receiver='John Doe',
         sum=100,
-        user_id=uuid4()
+        user_id=uuid4(),
+        order_id=uuid4()
     )
 
 def test_create_payment(payment_repo: PaymentRepo, sample_payment: Payment) -> None:

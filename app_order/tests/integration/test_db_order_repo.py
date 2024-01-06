@@ -20,8 +20,9 @@ def first_order() -> Order:
     status = OrderStatuses.CREATED
     discount = 0.1
     price = 100.0
+    user_id=uuid4()
 
-    return Order(id=id, cart=cart, status=status, discount=discount, price=price)
+    return Order(id=id, cart=cart, status=status, discount=discount, price=price,user_id=user_id)
 
 @pytest.fixture(scope='session')
 def second_order() -> Order:
@@ -30,8 +31,8 @@ def second_order() -> Order:
     status = OrderStatuses.PAID
     discount = None
     price = 102.0
-
-    return Order(id=id, cart=cart, status=status, discount=discount, price=price)
+    user_id = uuid4()
+    return Order(id=id, cart=cart, status=status, discount=discount, price=price,user_id=user_id)
 
 
 def test_empty_list(order_repo: order_repo) -> None:

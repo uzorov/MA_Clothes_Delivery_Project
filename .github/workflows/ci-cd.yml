@@ -18,10 +18,10 @@ jobs:
           sudo apt update
           sudo apt install -y python3-pip
           pip install -r ./app_printing/requirements.txt
-#
-#      - name: Run unit tests
-#        run: |
-#          pytest ./app_printing/tests/unit
+
+      - name: Run unit tests
+        run: |
+          pytest ./app_printing/tests/unit
 
       - name: Prepare integration tests
         run: |

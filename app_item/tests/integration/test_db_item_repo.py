@@ -6,7 +6,7 @@ from datetime import datetime
 from app.models.item import Item
 from app.repositories.db_item_repo import ItemRepo
 
-from app.models.design import Design
+from app.models.item import Design
 from app.repositories.design_repo import DesignRepo
 
 sleep(5)

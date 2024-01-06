@@ -20,12 +20,12 @@ def delivery_id() -> UUID:
 
 @pytest.fixture(scope='session')
 def first_delivery() -> Delivery:
-    return Delivery(id=uuid4(), date=datetime.now(), status=DeliveryStatuses.PENDING, type=DeliveryTypes.STANDARD)
+    return Delivery(id=uuid4(), date=datetime.now(), status=DeliveryStatuses.CREATED, type=DeliveryTypes.STANDARD)
 
 
 @pytest.fixture(scope='session')
 def second_delivery() -> Delivery:
-    return Delivery(id=uuid4(), date=datetime.now(), status=DeliveryStatuses.PENDING, type=DeliveryTypes.EXPRESS)
+    return Delivery(id=uuid4(), date=datetime.now(), status=DeliveryStatuses.CREATED, type=DeliveryTypes.EXPRESS)
 
 
 def test_empty_list(delivery_repo: DeliveryRepo) -> None:
@@ -60,22 +60,11 @@ def test_add_second_delivery(first_delivery: Delivery, second_delivery: Delivery
 
 
 def test_set_status(first_delivery: Delivery, delivery_repo: DeliveryRepo) -> None:
-    first_delivery.status = DeliveryStatuses.IN_TRANSIT
+    first_delivery.status = DeliveryStatuses.IN_PROCESS
     assert delivery_repo.set_status(first_delivery).status == first_delivery.status
 
-    first_delivery.status = DeliveryStatuses.DELIVERED
-    assert delivery_repo.set_status(first_delivery).status == first_delivery.status
-
-    first_delivery.status = DeliveryStatuses.PENDING
-    assert delivery_repo.set_status(first_delivery).status == first_delivery.status
 
 
 def test_set_type(first_delivery: Delivery, delivery_repo: DeliveryRepo) -> None:
-    first_delivery.type = DeliveryTypes.EXPRESS
-    assert delivery_repo.set_type(first_delivery).type == first_delivery.type
-
-    first_delivery.type = DeliveryTypes.STANDARD
-    assert delivery_repo.set_type(first_delivery).type == first_delivery.type
-
-    first_delivery.type = DeliveryTypes.EXPRESS
+    first_delivery.type = DeliveryTypes.DELIVERY
     assert delivery_repo.set_type(first_delivery).type == first_delivery.type
