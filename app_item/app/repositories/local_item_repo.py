@@ -4,8 +4,8 @@ from uuid import UUID, uuid4
 
 # Добавить дизайны
 designs = [
-    Design(id=UUID('d2a103d0-2e8c-4d0e-9cf3-f85ac2da4eb2'), name='Design1', image_url='url1'),
-    Design(id=UUID('f23e45f1-dfd3-4c08-a8a7-4cd0a0ddbf62'), name='Design2', image_url='url2'),
+    'Design1',
+    'Design2'
 ]
 
 # Добавить элементы с дизайнами
@@ -36,10 +36,10 @@ class ItemRepo():
                 return i
         raise ValueError(f"Promocode with code '{id}' do not exists")
     
-    def create_item(self, name: str, price: float) -> Item:
+    def create_item(self, name: str, price: float,design: str) -> Item:
         existing_items = next((i for i in items if i.name == name), None)
         if existing_items:
             raise ValueError(f"Promocode with code '{name}' already exists")
-        new_item = Item(id=uuid4(), name=name, price=price)
+        new_item = Item(id=uuid4(), name=name, price=price,design = design)
         items.append(new_item)
         return new_item

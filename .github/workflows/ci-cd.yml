@@ -186,7 +186,7 @@ jobs:
 
       - name: Run unit tests
         run: |
-          pytest ./app_promocode/tests/unit
+          pytest ./app_promocode/test/unit
 
       - name: Prepare integration tests
         run: |
@@ -202,7 +202,7 @@ jobs:
 
 #      - name: Run integration tests
 #        run: |
-#          pytest ./app_promocode/tests/integration
+#          pytest ./app_promocode/test/integration
 
   test-app-cart:
     name: Run app_cart tests

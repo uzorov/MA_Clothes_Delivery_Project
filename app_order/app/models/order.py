@@ -15,7 +15,7 @@ class Order(BaseModel):
     id: UUID = uuid4()
     cart: UUID
     status: OrderStatuses
-    discount: float | None
+    discount: float
     price: float
 
 
