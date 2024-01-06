@@ -14,6 +14,7 @@ def test_order_creation(any_cart_uuid):
         "status": OrderStatuses.DONE,
         "discount": 0.1,
         "price": 100.0,
+        "user_id": uuid4()
     }
 
     order = Order(**order_data)
@@ -31,6 +32,7 @@ def test_order_invalid_id_cart(any_cart_uuid):
         "price": 100.0,
         "status": OrderStatuses.DONE,
         "discount": 0.1,
+        "user_id":uuid4()
     }
 
     with pytest.raises(ValueError):
@@ -43,6 +45,7 @@ def test_order_invalid_price(any_cart_uuid):
         "price": 'invalid price',
         "status": OrderStatuses.DONE,
         "discount": 0.1,
+        "user_id": uuid4()
     }
 
     with pytest.raises(ValueError):
@@ -55,6 +58,7 @@ def test_order_invalid_status(any_cart_uuid):
         "price": 100.0,
         "status": "invalid status",
         "discount": 0.1,
+        "user_id": uuid4()
     }
 
     with pytest.raises(ValueError):
@@ -67,6 +71,7 @@ def test_order_invalid_discount(any_cart_uuid):
         "price": 100.0,
         "status": OrderStatuses.DONE,
         "discount": "invalid discount",
+        "user_id": uuid4()
     }
 
     with pytest.raises(ValueError):
@@ -78,6 +83,7 @@ def test_order_with_no_cart_id():
         "price": 100.0,
         "status": "invalid status",
         "discount": 0.1,
+        "user_id": uuid4()
     }
 
     with pytest.raises(ValueError):

@@ -11,7 +11,8 @@ def any_payment_data() -> dict:
         'id': uuid4(),
         'receiver': 'John Doe',
         'sum': 100,
-        'user_id': uuid4()
+        'user_id': uuid4(),
+        'order_id': uuid4()
     }
 
 
