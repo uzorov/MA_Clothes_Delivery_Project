@@ -27,7 +27,7 @@ trace.set_tracer_provider(
     )
 )
 jaeger_exporter = JaegerExporter(
-    #!!!!!!Нужно поменять значение в .env
+    # !!!!!!Нужно поменять значение в .env
     agent_host_name=settings.host_ip,
     agent_port=6831,
 )
@@ -63,9 +63,9 @@ def add_operation_result(span: Span, result: str) -> None:
 @payment_router.get('/')
 def get_all_payments(payment_service: PaymentService = Depends(PaymentService)) -> list[Payment]:
     with tracer.start_as_current_span("Get payments") as span:
+        add_endpoint_info(span, "/")
         try:
             result = payment_service.get_all_payments()
-            add_endpoint_info(span, "/")
             add_operation_result(span, "success")
             return result
         except Exception as e:
