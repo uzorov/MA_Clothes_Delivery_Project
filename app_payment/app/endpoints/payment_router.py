@@ -109,7 +109,7 @@ def create_payment(
             add_operation_result(span, f'Payment with id={payment_info.id} already exists')
             raise HTTPException(400, f'Payment with id={payment_info.id} already exists')
 
-@payment_router.put('/update_payment')
+@payment_router.post('/update_payment')
 def update_payment(
         payment_info: CreatePaymentRequest,
         payment_service: PaymentService = Depends(PaymentService)
