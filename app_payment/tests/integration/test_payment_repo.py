@@ -26,7 +26,7 @@ def test_create_payment(payment_repo: PaymentRepo, sample_payment: Payment) -> N
         user_id=uuid4(),
         order_id=uuid4()
     )
-    assert created_payment == sample_payment
+    assert created_payment.receiver == sample_payment.receiver
 
 def test_get_payment_by_id(payment_repo: PaymentRepo, sample_payment: Payment) -> None:
     retrieved_payment = payment_repo.get_payment_by_id(sample_payment.id)

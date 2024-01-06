@@ -29,7 +29,7 @@ def second_order() -> Order:
     id = uuid4()
     cart = uuid4()
     status = OrderStatuses.PAID
-    discount = None
+    discount = 0.1
     price = 102.0
     user_id = uuid4()
     return Order(id=id, cart=cart, status=status, discount=discount, price=price,user_id=user_id)
@@ -41,8 +41,8 @@ def test_create_first_order(first_order: Order, order_repo: order_repo) -> None:
     order = order_repo.get_user_orders(first_order.user_id)[-1]
     assert order == first_order
 
-def test_get_book_by_id(order_repo: order_repo) -> None:
-    order = order_repo.get_orders()[0]
+def test_get_book_by_id(first_order: Order,order_repo: order_repo) -> None:
+    order = order_repo.get_user_orders(first_order.user_id)()[0]
     book_by_id = order_repo.get_order_by_id(order.id)
     assert order.id == book_by_id.id
 
