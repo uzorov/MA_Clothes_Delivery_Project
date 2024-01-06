@@ -1,6 +1,6 @@
 import pytest
 from uuid import UUID,uuid4
-from app.models.payment_model import Payment, PaymentType
+from app.models.payment_model import Payment
 from app.repositories.db_payment_repo import PaymentRepo
 
 @pytest.fixture()
@@ -14,7 +14,6 @@ def sample_payment() -> Payment:
         id=uuid4(),
         receiver='John Doe',
         sum=100,
-        type=PaymentType.PC,
         user_id=uuid4()
     )
 
