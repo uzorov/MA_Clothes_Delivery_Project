@@ -27,11 +27,13 @@ def make_request_to_payment_service(data):
         raise Exception(f"Error making request to payment: {response.status_code}, {response.text}")
 
 async def process_discount(msg: IncomingMessage):
+    print("________________PROCESS DISCOUNT_________________")
     try:
         data = json.loads(msg.body.decode())
         logging.info(data)
         id = UUID(data['id'])
         discount = data['discount']
+        print("DISCOUNT: "+discount+" ID: "+id)
         order_service = OrderService(OrderRepo())
         order = order_service.set_discount(id, discount)
         print("ORDER:"+str(order.dict()))
