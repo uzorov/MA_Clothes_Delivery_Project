@@ -31,6 +31,8 @@ jobs:
           POSTGRES_URL_PRINTING=$POSTGRES_URL
           " > ./.env
           sleep 5
+          cd app_printing
+          alembic upgrade head
         env:
           AMQP_URL: amqp://guest:guest@actual_pr678-rabbitmq-1:5672/
           POSTGRES_URL: postgresql://postgres:krya@localhost:5432/printings
@@ -64,6 +66,8 @@ jobs:
           POSTGRES_URL_DELIVERY=$POSTGRES_URL
           " > ./.env
           sleep 5
+          cd app_delivery
+          alembic upgrade head
         env:
           AMQP_URL: amqp://guest:guest@actual_pr678-rabbitmq-1:5672/
           POSTGRES_URL: postgresql://postgres:krya@localhost:5432/deliveries
@@ -97,6 +101,8 @@ jobs:
           POSTGRES_URL_PAYMENT=$POSTGRES_URL
           " > ./.env
           sleep 5
+          cd app_payment
+          alembic upgrade head
         env:
           AMQP_URL: amqp://guest:guest@actual_pr678-rabbitmq-1:5672/
           POSTGRES_URL: postgresql://postgres:krya@localhost:5432/payments
@@ -130,6 +136,8 @@ jobs:
           POSTGRES_URL_ORDER=$POSTGRES_URL
           " > ./.env
           sleep 5
+          cd app_order
+          alembic upgrade head
         env:
           AMQP_URL: amqp://guest:guest@actual_pr678-rabbitmq-1:5672/
           POSTGRES_URL: postgresql://postgres:krya@localhost:5432/orders
@@ -163,6 +171,8 @@ jobs:
           POSTGRES_URL_ITEM=$POSTGRES_URL
           " > ./.env
           sleep 5
+          cd app_item
+          alembic upgrade head
         env:
           AMQP_URL: amqp://guest:guest@actual_pr678-rabbitmq-1:5672/
           POSTGRES_URL: postgresql://postgres:krya@localhost:5432/items
@@ -196,6 +206,8 @@ jobs:
           POSTGRES_URL_PROMOCODE=$POSTGRES_URL
           " > ./.env
           sleep 5
+          cd app_promocode
+          alembic upgrade head
         env:
           AMQP_URL: amqp://guest:guest@actual_pr678-rabbitmq-1:5672/
           POSTGRES_URL: postgresql://postgres:krya@localhost:5432/promocodes
@@ -229,6 +241,8 @@ jobs:
           POSTGRES_URL_CART=$POSTGRES_URL
           " > ./.env
           sleep 5
+          cd app_cart
+          alembic upgrade head
         env:
           AMQP_URL: amqp://guest:guest@actual_pr678-rabbitmq-1:5672/
           POSTGRES_URL: postgresql://postgres:krya@localhost:5432/carts
