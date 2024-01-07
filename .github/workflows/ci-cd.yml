@@ -2,7 +2,7 @@ name: CI/CD pipline
 
 on:
   push:
-    branches: ["master"]
+    branches: [ "master" ]
 
 jobs:
 
@@ -236,73 +236,203 @@ jobs:
       - name: Run integration tests
         run: |
           pytest ./app_cart/tests/integration
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+#Printing service building____________________________________________________________________
+  build-and-push-app-printing-to-yc:
+    name: Build and push printing service image to YandexCloud Registry
+    needs: [ test-app-printing ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build docker image
+        run: |
+          docker build ./app_printing -f ./app_printing/Dockerfile --tag cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_printing_service:latest
+
+      - name: Login to YC Registry
+        uses: docker/login-action@v3.0.0
+        with:
+          registry: cr.yandex
+          username: json_key
+          password: ${{ secrets.YC_KEYS }}
+
+      - name: Push tag YC Registry
+        run: |
+          docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_printing_service:latest
 
 
+#Cart service building____________________________________________________________________
+  build-and-push-app-cart-to-yc:
+    name: Build and push cart service image to YandexCloud Registry
+    needs: [ test-app-printing ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build docker image
+        run: |
+          docker build ./app_printing -f ./app_printing/Dockerfile --tag cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_cart_service:latest
+
+      - name: Login to YC Registry
+        uses: docker/login-action@v3.0.0
+        with:
+          registry: cr.yandex
+          username: json_key
+          password: ${{ secrets.YC_KEYS }}
+
+      - name: Push tag YC Registry
+        run: |
+          docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_cart_service:latest
 
 
+#Delivery service building____________________________________________________________________
+  build-and-push-app-delivery-to-yc:
+    name: Build and push delivery service image to YandexCloud Registry
+    needs: [ test-app-printing ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build docker image
+        run: |
+          docker build ./app_printing -f ./app_printing/Dockerfile --tag cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_delivery_service:latest
+
+      - name: Login to YC Registry
+        uses: docker/login-action@v3.0.0
+        with:
+          registry: cr.yandex
+          username: json_key
+          password: ${{ secrets.YC_KEYS }}
+
+      - name: Push tag YC Registry
+        run: |
+          docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_delivery_service:latest
 
 
+#Item service building____________________________________________________________________
+  build-and-push-app-item-to-yc:
+    name: Build and push item service image to YandexCloud Registry
+    needs: [ test-app-printing ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build docker image
+        run: |
+          docker build ./app_printing -f ./app_printing/Dockerfile --tag cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_item_service:latest
+
+      - name: Login to YC Registry
+        uses: docker/login-action@v3.0.0
+        with:
+          registry: cr.yandex
+          username: json_key
+          password: ${{ secrets.YC_KEYS }}
+
+      - name: Push tag YC Registry
+        run: |
+          docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_item_service:latest
 
 
+#Order service building____________________________________________________________________
+  build-and-push-app-order-to-yc:
+    name: Build and push order service image to YandexCloud Registry
+    needs: [ test-app-printing ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build docker image
+        run: |
+          docker build ./app_printing -f ./app_printing/Dockerfile --tag cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_order_service:latest
+
+      - name: Login to YC Registry
+        uses: docker/login-action@v3.0.0
+        with:
+          registry: cr.yandex
+          username: json_key
+          password: ${{ secrets.YC_KEYS }}
+
+      - name: Push tag YC Registry
+        run: |
+          docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_order_service:latest
+   
+
+#Payment service building____________________________________________________________________
+  build-and-push-app-payment-to-yc:
+    name: Build and push payment service image to YandexCloud Registry
+    needs: [ test-app-printing ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build docker image
+        run: |
+          docker build ./app_printing -f ./app_printing/Dockerfile --tag cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_payment_service:latest
+
+      - name: Login to YC Registry
+        uses: docker/login-action@v3.0.0
+        with:
+          registry: cr.yandex
+          username: json_key
+          password: ${{ secrets.YC_KEYS }}
+
+      - name: Push tag YC Registry
+        run: |
+          docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_payment_service:latest
 
 
+#Promocode service building____________________________________________________________________
+  build-and-push-app-promocode-to-yc:
+    name: Build and push promocode service image to YandexCloud Registry
+    needs: [ test-app-printing ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
 
-#    build-and-push-to-dh:
-#      name: Build and push to DockerHub
-#      needs: [ test-app-printing ]
-#      runs-on: ubuntu-latest
-#      steps:
-#        - uses: actions/checkout@v3
-#
-#        - name: Build docker app_delivery image
-#          run: |
-#            docker build ./app_delivery -f ./app_delivery/Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/actual_pr678-app_delivery:latest
-#
-#        - name: Login to DockerHub
-#          uses: docker/login-action@v3.0.0
-#          with:
-#            username: ${{ secrets.DOCKER_USERNAME }}
-#            password: ${{ secrets.DOCKER_PASSWORD }}
-#
-#
-#        - name: Build and push app_delivery service image
-#          run: |
-#            docker push ${{ secrets.DOCKER_USERNAME }}/actual_pr678-app_delivery:latest
-#
-#      build-and-push-to-yc:
-#        name: Build and push to YandexCloud Registry
-#        needs: [ test-app-printing ]
-#        runs-on: ubuntu-latest
-#        steps:
-#          - uses: actions/checkout@v3
-#
-#          - name: Build docker image
-#            run: |
-#              docker build ./app_printing -f ./app_printing/Dockerfile --tag cr.yandex/${{ secrets.YC_REGISTRY_ID }}/actual_pr678-app_printing:latest
-#
-#          - name: Login to YC Registry
-#            uses: docker/login-action@v3.0.0
-#            with:
-#              registry: cr.yandex
-#              username: json_key
-#              password: ${{ secrets.YC_KEYS }}
-#
-#          - name: Push tag YC Registry
-#            run: |
-#              docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/actual_pr678-app_printing:latest
-#      deploy:
-#        name: Deploy
-#        runs-on: ubuntu-latest
-#        needs: [ build-and-push-to-yc, test-app-printing ]
-#        steps:
-#          - name: Deploy serverless container
-#            uses: yc-actions/yc-sls-container-deploy@v1
-#            with:
-#              yc-sa-json-credentials: ${{ secrets.YC_KEYS }}
-#              container-name: ${{ secrets.YC_CONTAINER_NAME }}
-#              folder-id: ${{ secrets.YC_FOLDER_ID }}
-#              revision-image-url: cr.yandex/${{ secrets.YC_REGISTRY_ID }}/actual_pr678-app_printing:latest
-#              revision-service-account-id: ${{ secrets.YC_SA_ID }}
-#              revision-env: |
-#                AMQP_URL=${{ secrets.ENV_AMQP_URL }}
-#                POSTGRES_URL=${{ secrets.ENV_POSTGRES_URL }}
+      - name: Build docker image
+        run: |
+          docker build ./app_printing -f ./app_printing/Dockerfile --tag cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_promocode_service:latest
+
+      - name: Login to YC Registry
+        uses: docker/login-action@v3.0.0
+        with:
+          registry: cr.yandex
+          username: json_key
+          password: ${{ secrets.YC_KEYS }}
+
+      - name: Push tag YC Registry
+        run: |
+          docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_promocode_service:latest
+
+######################################################################################
+######################################################################################
+#_______________________________Deployment____________________________________________
+
+
+#  deploy:
+#    name: Deploy
+#    runs-on: ubuntu-latest
+#    needs: [ build-and-push-to-yc, test-app-printing ]
+#    steps:
+#      - name: Deploy serverless container
+#        uses: yc-actions/yc-sls-container-deploy@v1
+#        with:
+#          yc-sa-json-credentials: ${{ secrets.YC_KEYS }}
+#          container-name: ${{ secrets.YC_CONTAINER_NAME }}
+#          folder-id: ${{ secrets.YC_FOLDER_ID }}
+#          revision-image-url: cr.yandex/${{ secrets.YC_REGISTRY_ID }}/actual_pr678-app_printing:latest
+#          revision-service-account-id: ${{ secrets.YC_SA_ID }}
+#          revision-env: |
+#            AMQP_URL=${{ secrets.ENV_AMQP_URL }}
+#            POSTGRES_URL=${{ secrets.ENV_POSTGRES_URL }}
