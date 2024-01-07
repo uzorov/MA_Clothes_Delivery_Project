@@ -38,9 +38,23 @@ async def process_discount(msg: IncomingMessage):
         order = order_service.set_discount(id, discount)
         print("ORDER:" + str(order.dict()))
         make_request_to_payment_service(order.dict())
+        await send_discount(discount, id)  #ПОПЫТКА В РЕББИТ
     except:
         traceback.print_exc()
         await msg.ack()
+
+async def send_discount(discount: float, id: UUID):
+    print('Sending discount')
+    connection = await connect_robust(settings.amqp_url)
+    channel = await connection.channel()
+    message_body = json.dumps({'sum': discount, 'order_id': str(id)})
+    logging.info(message_body, 'rab_prom')
+    await channel.default_exchange.publish(
+        Message(body=message_body.encode()),
+        routing_key='discount_queue'
+    )
+    await channel.close()
+    await connection.close()
 
 async def process_delivery(msg: IncomingMessage):
     try:
@@ -70,6 +84,8 @@ async def consume_tasks(loop: AbstractEventLoop) -> AbstractRobustConnection:
     task_created_queue = await channel.declare_queue('process_discount_queue', durable=True)
     delivery_queue = await channel.declare_queue('process_finish_delivery_queue', durable=True)
     paid_order_queue = await channel.declare_queue('payment_queue', durable=True)
+    discount_queue = await channel.declare_queue('discount_queue', durable=True)
+    await discount_queue.consume(process_discount)
     await paid_order_queue.consume(process_paid_order)
     await delivery_queue.consume(process_delivery)
     await task_created_queue.consume(process_discount)

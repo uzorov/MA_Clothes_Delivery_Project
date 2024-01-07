@@ -20,6 +20,14 @@ async def process_payment(msg: IncomingMessage):
     finally:
         await msg.ack()
 
+async def process_discount(msg: IncomingMessage):
+    try:
+        data = json.loads(msg.body.decode())
+        PaymentService(PaymentRepo()).update_payment(data['order_id'], data['sum'])
+    except:
+        traceback.print_exc()
+    finally:
+        await msg.ack()
 
 async def send_payment_message(id: UUID):
     print('SENDING PAYMENT RESULT')
@@ -51,6 +59,8 @@ async def consume_payment(loop: AbstractEventLoop) -> AbstractRobustConnection:
     connection = await connect_robust(settings.amqp_url, loop=loop)
     channel = await connection.channel()
 
+    discount_queue = await channel.declare_queue('discount_queue', durable=True)
+    await discount_queue.consume(process_discount)
     task_created_queue = await channel.declare_queue('payment_queue', durable=True)
     await task_created_queue.consume(process_payment)
     printing_queue = await channel.declare_queue('printing_payment_queue', durable=True)
