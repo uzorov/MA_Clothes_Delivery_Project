@@ -19,7 +19,7 @@ class OrderService():
         return self.order_repo.get_user_order_by_id(order_id, user_id)
 
     def create_order(self, cart: UUID, price: float, user_id: UUID) -> Order:
-        order = Order(id=uuid4(), cart=cart, discount=None, status=OrderStatuses.CREATED, price=price, user_id=user_id)
+        order = Order(id=uuid4(), cart=cart, discount=1.0, status=OrderStatuses.CREATED, price=price, user_id=user_id)
         return self.order_repo.create_order(order)
 
     def paid_order(self, id: UUID) -> Order:

@@ -40,110 +40,110 @@ services:
 #    networks:
 #      - app
 
-  app_delivery:
-    build:
-      context: .
-      dockerfile: /app_delivery/Dockerfile
-    ports:
-      - "80:80"
-    # depends_on:
-      # - postgres-delivery
-      # - rabbitmq
-    labels:
-      logging: "promtail"
-      logging_jobname: "containerlogs"
-    networks:
-      - app
-
-  app_printing:
-    build:
-      context: .
-      dockerfile: /app_printing/Dockerfile
-    ports:
-      - "81:81"
-    # depends_on:
-      # - postgres-printing
-      # - rabbitmq
-    labels:
-      logging: "promtail"
-      logging_jobname: "containerlogs"
-    networks:
-      - app
-
-  app_payment:
-    build:
-      context: .
-      dockerfile: /app_payment/Dockerfile
-    ports:
-      - "82:82"
-    # depends_on:
-      # - postgres-payment
-      # - rabbitmq
-    labels:
-      logging: "promtail"
-      logging_jobname: "containerlogs"
-    networks:
-      - app
-
-  app_item:
-    build:
-      context: .
-      dockerfile: /app_item/Dockerfile
-    ports:
-      - "83:83"
-    # depends_on:
-    # - postgres-cart
-    # - rabbitmq
-    labels:
-      logging: "promtail"
-      logging_jobname: "containerlogs"
-    networks:
-      - app
-
-  app_order:
-    build:
-      context: .
-      dockerfile: /app_order/Dockerfile
-    ports:
-      - "84:84"
-    # depends_on:
-    # - postgres-order
-    # - rabbitmq
-    labels:
-      logging: "promtail"
-      logging_jobname: "containerlogs"
-    networks:
-      - app
-
-  app_promocode:
-    build:
-      context: .
-      dockerfile: /app_promocode/Dockerfile
-    ports:
-      - "85:85"
-    # depends_on:
-    # - postgres-promocode
-    # - rabbitmq
-    labels:
-      logging: "promtail"
-      logging_jobname: "containerlogs"
-    networks:
-      - app
-
-  app_cart:
-    build:
-      context: .
-      dockerfile: /app_cart/Dockerfile
-    ports:
-      - "86:86"
-    # depends_on:
-    # - postgres-cart
-    # - rabbitmq
-    labels:
-      logging: "promtail"
-      logging_jobname: "containerlogs"
-    networks:
-      - app
+#  app_delivery:
+#    build:
+#      context: .
+#      dockerfile: /app_delivery/Dockerfile
+#    ports:
+#      - "80:80"
+#    # depends_on:
+#      # - postgres-delivery
+#      # - rabbitmq
+#    labels:
+#      logging: "promtail"
+#      logging_jobname: "containerlogs"
+#    networks:
+#      - app
+#
+#  app_printing:
+#    build:
+#      context: .
+#      dockerfile: /app_printing/Dockerfile
+#    ports:
+#      - "81:81"
+#    # depends_on:
+#      # - postgres-printing
+#      # - rabbitmq
+#    labels:
+#      logging: "promtail"
+#      logging_jobname: "containerlogs"
+#    networks:
+#      - app
+#
+#  app_payment:
+#    build:
+#      context: .
+#      dockerfile: /app_payment/Dockerfile
+#    ports:
+#      - "82:82"
+#    # depends_on:
+#      # - postgres-payment
+#      # - rabbitmq
+#    labels:
+#      logging: "promtail"
+#      logging_jobname: "containerlogs"
+#    networks:
+#      - app
+#
+#  app_item:
+#    build:
+#      context: .
+#      dockerfile: /app_item/Dockerfile
+#    ports:
+#      - "83:83"
+#    # depends_on:
+#    # - postgres-cart
+#    # - rabbitmq
+#    labels:
+#      logging: "promtail"
+#      logging_jobname: "containerlogs"
+#    networks:
+#      - app
+#
+#  app_order:
+#    build:
+#      context: .
+#      dockerfile: /app_order/Dockerfile
+#    ports:
+#      - "84:84"
+#    # depends_on:
+#    # - postgres-order
+#    # - rabbitmq
+#    labels:
+#      logging: "promtail"
+#      logging_jobname: "containerlogs"
+#    networks:
+#      - app
+#
+#  app_promocode:
+#    build:
+#      context: .
+#      dockerfile: /app_promocode/Dockerfile
+#    ports:
+#      - "85:85"
+#    # depends_on:
+#    # - postgres-promocode
+#    # - rabbitmq
+#    labels:
+#      logging: "promtail"
+#      logging_jobname: "containerlogs"
+#    networks:
+#      - app
+#
+#  app_cart:
+#    build:
+#      context: .
+#      dockerfile: /app_cart/Dockerfile
+#    ports:
+#      - "86:86"
+#    # depends_on:
+#    # - postgres-cart
+#    # - rabbitmq
+#    labels:
+#      logging: "promtail"
+#      logging_jobname: "containerlogs"
+#    networks:
+#      - app
 
   pgadmin:
     image: dpage/pgadmin4
@@ -155,94 +155,94 @@ services:
     networks:
       - app
 
-  keycloak:
-    image: quay.io/keycloak/keycloak:23.0.1
-    volumes:
-      - ./realm-export.json:/opt/jboss/keycloak/imports/realm-export.json
-    ports:
-      - "8080:8080"
-    environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
-    command:
-      - "start-dev"
-      - "-Dkeycloak.profile.feature.upload_scripts=enabled"
-      - "-Dkeycloak.migration.action=import"
-      - "-Dkeycloak.migration.provider=singleFile"
-      - "-Dkeycloak.migration.file=/opt/jboss/keycloak/imports/realm-export.json"
-    networks:
-      - app
-
-  prometheus:
-    image: prom/prometheus:latest
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-    ports:
-      - "9090:9090"
+#  keycloak:
+#    image: quay.io/keycloak/keycloak:23.0.1
+#    volumes:
+#      - ./realm-export.json:/opt/jboss/keycloak/imports/realm-export.json
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      - KEYCLOAK_ADMIN=admin
+#      - KEYCLOAK_ADMIN_PASSWORD=admin
+#    command:
+#      - "start-dev"
+#      - "-Dkeycloak.profile.feature.upload_scripts=enabled"
+#      - "-Dkeycloak.migration.action=import"
+#      - "-Dkeycloak.migration.provider=singleFile"
+#      - "-Dkeycloak.migration.file=/opt/jboss/keycloak/imports/realm-export.json"
 #    networks:
 #      - app
-
-  grafana:
-    image: grafana/grafana:latest
-    environment:
-      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-    entrypoint:
-      - sh
-      - -euc
-      - |
-        mkdir -p /etc/grafana/provisioning/datasources
-        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
-        apiVersion: 1
-        datasources:
-        - name: Loki
-          type: loki
-          access: proxy
-          orgId: 1
-          url: http://loki:3100
-          basicAuth: false
-          isDefault: true
-          version: 1
-          editable: false
-        EOF
-        /run.sh
-    ports:
-      - "3000:3000"
-#    networks:
-#      - app
-
-  loki:
-    image: grafana/loki:latest
-    ports:
-      - "3100:3100"
-    command: -config.file=/etc/loki/local-config.yaml
-#    networks:
-#      - app
-
-  promtail:
-    image: grafana/promtail:latest
-    volumes:
-      - ./config/promtail.yaml:/etc/promtail/docker-config.yaml
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: -config.file=/etc/promtail/docker-config.yaml
-    depends_on:
-      - loki
-#    networks:
-#      - app
-
-  jaeger:
-    image: jaegertracing/all-in-one:1.38
-    ports:
-      - 5775:5775/udp # accept zipkin.thrift over compact thrift protocol
-      - 6831:6831/udp # accept jaeger.thrift over compact thrift protocol
-      - 6832:6832/udp # accept jaeger.thrift over binary thrift protocol
-      - 5778:5778 # serve configs
-      - 16686:16686 # serve frontend
-      - 14268:14268 # accept jaeger.thrift directly from clients
+#
+#  prometheus:
+#    image: prom/prometheus:latest
+#    volumes:
+#      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+#    command:
+#      - '--config.file=/etc/prometheus/prometheus.yml'
+#    ports:
+#      - "9090:9090"
+##    networks:
+##      - app
+#
+#  grafana:
+#    image: grafana/grafana:latest
+#    environment:
+#      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+#      - GF_AUTH_ANONYMOUS_ENABLED=true
+#      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+#    entrypoint:
+#      - sh
+#      - -euc
+#      - |
+#        mkdir -p /etc/grafana/provisioning/datasources
+#        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+#        apiVersion: 1
+#        datasources:
+#        - name: Loki
+#          type: loki
+#          access: proxy
+#          orgId: 1
+#          url: http://loki:3100
+#          basicAuth: false
+#          isDefault: true
+#          version: 1
+#          editable: false
+#        EOF
+#        /run.sh
+#    ports:
+#      - "3000:3000"
+##    networks:
+##      - app
+#
+#  loki:
+#    image: grafana/loki:latest
+#    ports:
+#      - "3100:3100"
+#    command: -config.file=/etc/loki/local-config.yaml
+##    networks:
+##      - app
+#
+#  promtail:
+#    image: grafana/promtail:latest
+#    volumes:
+#      - ./config/promtail.yaml:/etc/promtail/docker-config.yaml
+#      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+#      - /var/run/docker.sock:/var/run/docker.sock
+#    command: -config.file=/etc/promtail/docker-config.yaml
+#    depends_on:
+#      - loki
+##    networks:
+##      - app
+#
+#  jaeger:
+#    image: jaegertracing/all-in-one:1.38
+#    ports:
+#      - 5775:5775/udp # accept zipkin.thrift over compact thrift protocol
+#      - 6831:6831/udp # accept jaeger.thrift over compact thrift protocol
+#      - 6832:6832/udp # accept jaeger.thrift over binary thrift protocol
+#      - 5778:5778 # serve configs
+#      - 16686:16686 # serve frontend
+#      - 14268:14268 # accept jaeger.thrift directly from clients
 
 networks:
   app:
