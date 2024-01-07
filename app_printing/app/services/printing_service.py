@@ -17,6 +17,9 @@ class PrintingService():
 
     def get_printings(self) -> list[Printing]:
         return self.printing_repo.get_printings()
+    
+    def get_printing_by_id(self, id: UUID):
+        return self.printing_repo.get_printing_by_id(id)
 
     def create_printing(self, order_id: UUID) -> Printing:
         current_date = datetime.now()

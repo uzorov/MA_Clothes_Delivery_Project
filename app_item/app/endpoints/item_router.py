@@ -165,7 +165,7 @@ def update_design_image(
             raise HTTPException(400, f'Invalid image: {new_image}')
 
 
-@item_router.delete('/delete-design/{id}')
+@item_router.delete('/delete_design/{id}')
 def delete_design(
         id: UUID,
         design_service: DesignService = Depends(DesignService)
@@ -176,6 +176,20 @@ def delete_design(
             design = design_service.delete_design(id)
             add_operation_result(span, "success")
             return design.dict()
+        except KeyError:
+            add_operation_result(span, "failure")
+            raise HTTPException(404, f'Design with id={id} not found')
+        
+@item_router.delete('/delete_item/{id}')
+def delete_item(id: UUID, 
+                item_service: ItemService = Depends(ItemService),
+                user: str = Header(...),) -> Item:
+    with tracer.start_as_current_span("Delete design") as span:
+        add_endpoint_info(span, "/delete-design/{id}")
+        try:
+            item = item_service.delete_design(id)
+            add_operation_result(span, "success")
+            return item.dict()
         except KeyError:
             add_operation_result(span, "failure")
             raise HTTPException(404, f'Design with id={id} not found')

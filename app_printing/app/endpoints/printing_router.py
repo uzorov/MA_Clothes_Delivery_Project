@@ -84,11 +84,11 @@ def get_printings(printing_service: PrintingService = Depends(PrintingService)) 
         get_printings_count.inc(1)
         return printing_service.get_printings()
 
-@printing_router.get('/')
-def get_printings(printing_service: PrintingService = Depends(PrintingService)) -> list[Printing]:
+@printing_router.get('/{id}')
+def get_printing_by_id(id: UUID, printing_service: PrintingService = Depends(PrintingService)) -> Printing:
     with tracer.start_as_current_span("Get users printings"):
         get_printings_count.inc(1)
-        return printing_service.get_printings()
+        return printing_service.get_printing_by_id(id)
 
 
 @printing_router.post('/')
