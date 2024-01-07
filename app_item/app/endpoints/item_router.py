@@ -30,7 +30,7 @@ trace.set_tracer_provider(
 )
 jaeger_exporter = JaegerExporter(
     # !!!!!!Нужно поменять значение в .env
-    agent_host_name=settings.host_ip,
+    agent_host_name="localhost",
     agent_port=6831,
 )
 trace.get_tracer_provider().add_span_processor(
