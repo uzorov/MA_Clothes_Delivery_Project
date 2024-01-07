@@ -258,6 +258,9 @@ jobs:
   
   
   
+  ################################################################################################
+  ################################################################################################
+  ##################################Building and Pushing##########################################
 
   #Printing service building____________________________________________________________________
   build-and-push-app-printing-to-yc:
@@ -426,6 +429,7 @@ jobs:
         run: |
           docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_promocode_service:latest
 
+
   ######################################################################################
   ######################################################################################
   #_______________________________Deployment____________________________________________
@@ -433,7 +437,7 @@ jobs:
   deploy-app-printing:
     name: Printing service deploy
     runs-on: ubuntu-latest
-    needs: [  build-and-push-app-printing-to-yc, test-app-printing ]
+    needs: [ build-and-push-app-printing-to-yc, test-app-printing ]
     steps:
       - name: Deploy serverless container
         uses: yc-actions/yc-sls-container-deploy@v1
@@ -445,6 +449,118 @@ jobs:
           revision-service-account-id: ${{ secrets.YC_SA_ID }}
           revision-env: |
             AMQP_URL=${{ secrets.ENV_AMQP_URL }}
-            POSTGRES_URL=${{ secrets.ENV_POSTGRES_URL }}
+            POSTGRES_URL_PRINTING=${{ secrets.POSTGRES_URL_PRINTING }}
 
-#######################################################################################################
+  #######################################################################################################
+
+  deploy-app-cart:
+    name: Cart service deploy
+    runs-on: ubuntu-latest
+    needs: [ build-and-push-app-cart-to-yc, test-app-cart ]
+    steps:
+      - name: Deploy serverless container
+        uses: yc-actions/yc-sls-container-deploy@v1
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_KEYS }}
+          container-name: ${{ secrets.YC_CART_APP_CONTAINER_NAME }}
+          folder-id: ${{ secrets.YC_FOLDER_ID }}
+          revision-image-url: cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_cart_service:latest
+          revision-service-account-id: ${{ secrets.YC_SA_ID }}
+          revision-env: |
+            AMQP_URL=${{ secrets.ENV_AMQP_URL }}
+            POSTGRES_URL_CART=${{ secrets.POSTGRES_URL_CART }}
+
+  #######################################################################################################
+
+  deploy-app-delivery:
+    name: Delivery service deploy
+    runs-on: ubuntu-latest
+    needs: [ build-and-push-app-delivery-to-yc, test-app-delivery ]
+    steps:
+      - name: Deploy serverless container
+        uses: yc-actions/yc-sls-container-deploy@v1
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_KEYS }}
+          container-name: ${{ secrets.YC_DELIVERY_APP_CONTAINER_NAME }}
+          folder-id: ${{ secrets.YC_FOLDER_ID }}
+          revision-image-url: cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_delivery_service:latest
+          revision-service-account-id: ${{ secrets.YC_SA_ID }}
+          revision-env: |
+            AMQP_URL=${{ secrets.ENV_AMQP_URL }}
+            POSTGRES_URL_DELIVERY=${{ secrets.POSTGRES_URL_DELIVERY }}
+
+  #######################################################################################################
+
+  deploy-app-item:
+    name: Item service deploy
+    runs-on: ubuntu-latest
+    needs: [ build-and-push-app-item-to-yc, test-app-item ]
+    steps:
+      - name: Deploy serverless container
+        uses: yc-actions/yc-sls-container-deploy@v1
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_KEYS }}
+          container-name: ${{ secrets.YC_ITEM_APP_CONTAINER_NAME }}
+          folder-id: ${{ secrets.YC_FOLDER_ID }}
+          revision-image-url: cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_item_service:latest
+          revision-service-account-id: ${{ secrets.YC_SA_ID }}
+          revision-env: |
+            AMQP_URL=${{ secrets.ENV_AMQP_URL }}
+            POSTGRES_URL_ITEM=${{ secrets.POSTGRES_URL_ITEM }}
+
+  #######################################################################################################
+
+  deploy-app-order:
+    name: Order service deploy
+    runs-on: ubuntu-latest
+    needs: [ build-and-push-app-order-to-yc, test-app-order ]
+    steps:
+      - name: Deploy serverless container
+        uses: yc-actions/yc-sls-container-deploy@v1
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_KEYS }}
+          container-name: ${{ secrets.YC_ORDER_APP_CONTAINER_NAME }}
+          folder-id: ${{ secrets.YC_FOLDER_ID }}
+          revision-image-url: cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_order_service:latest
+          revision-service-account-id: ${{ secrets.YC_SA_ID }}
+          revision-env: |
+            AMQP_URL=${{ secrets.ENV_AMQP_URL }}
+            POSTGRES_URL_ORDER=${{ secrets.POSTGRES_URL_ORDER }}
+
+  #######################################################################################################
+
+  deploy-app-payment:
+    name: Payment service deploy
+    runs-on: ubuntu-latest
+    needs: [ build-and-push-app-payment-to-yc, test-app-payment ]
+    steps:
+      - name: Deploy serverless container
+        uses: yc-actions/yc-sls-container-deploy@v1
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_KEYS }}
+          container-name: ${{ secrets.YC_PAYMENT_APP_CONTAINER_NAME }}
+          folder-id: ${{ secrets.YC_FOLDER_ID }}
+          revision-image-url: cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_payment_service:latest
+          revision-service-account-id: ${{ secrets.YC_SA_ID }}
+          revision-env: |
+            AMQP_URL=${{ secrets.ENV_AMQP_URL }}
+            POSTGRES_URL_PAYMENT=${{ secrets.POSTGRES_URL_PAYMENT }}
+
+  #######################################################################################################
+
+  deploy-app-promocode:
+    name: Promocode service deploy
+    runs-on: ubuntu-latest
+    needs: [ build-and-push-app-promocode-to-yc, test-app-promocode ]
+    steps:
+      - name: Deploy serverless container
+        uses: yc-actions/yc-sls-container-deploy@v1
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_KEYS }}
+          container-name: ${{ secrets.YC_PROMOCODE_APP_CONTAINER_NAME }}
+          folder-id: ${{ secrets.YC_FOLDER_ID }}
+          revision-image-url: cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_promocode_service:latest
+          revision-service-account-id: ${{ secrets.YC_SA_ID }}
+          revision-env: |
+            AMQP_URL=${{ secrets.ENV_AMQP_URL }}
+            POSTGRES_URL_PROMOCODE=${{ secrets.POSTGRES_URL_PROMOCODE }}
