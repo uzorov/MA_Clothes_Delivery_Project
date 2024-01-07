@@ -60,7 +60,9 @@ def add_operation_result(span: Span, result: str) -> None:
 
 
 item_router = APIRouter(prefix='/item', tags=['Item'])
-target_service_url = "http://192.168.1.92:86"
+
+# request to cart service
+target_service_url = "https://bba9bi2fk969n6lrbri8.containers.yandexcloud.net"
 
 
 def make_request_to_target_service(item_id, size, count, price, name, user):

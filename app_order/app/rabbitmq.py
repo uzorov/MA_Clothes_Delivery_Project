@@ -12,7 +12,7 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 
-payment_service_url = "http://app_payment:82"
+payment_service_url = "https://bbagsn9ksci9tifcinu9.containers.yandexcloud.net"
 
 def make_request_to_payment_service(data):
     print("DATA:"+str(data))

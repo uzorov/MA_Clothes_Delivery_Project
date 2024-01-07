@@ -87,8 +87,8 @@ def get_metrics():
     )
 
 
-payment_service_url = "http://app_payment:82"
-printing_service_url = "http://app_printing:81"
+payment_service_url = "https://bbagsn9ksci9tifcinu9.containers.yandexcloud.net"
+printing_service_url = "https://bbaif5o8621h44fjp96q.containers.yandexcloud.net"
 
 
 def make_request_to_payment_service(data):

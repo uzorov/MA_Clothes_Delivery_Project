@@ -64,7 +64,7 @@ cancelled_printing_count = prometheus_client.Counter(
     "Total canceled printings"
 )
 
-delivery_service_url = "http://app_delivery:80"
+delivery_service_url = "https://bbapu2gipilstlsge2kn.containers.yandexcloud.net"
 
 def make_request_to_delivery_service(id):
     url = f"{delivery_service_url}/api/delivery/"

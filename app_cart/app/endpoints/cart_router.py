@@ -74,7 +74,8 @@ create_cart_count = prometheus_client.Counter(
     "Number of get requests"
 )
 
-target_service_url = "http://app_order:84"
+#request to order service
+target_service_url = "https://bbao8dmhdaak232edmks.containers.yandexcloud.net"
 
 
 def make_request_to_target_service(data):
