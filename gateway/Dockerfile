@@ -3,6 +3,9 @@ FROM python:3.10
 # Выбор папки, в которой будет вестись работа
 WORKDIR /gateway
 
+
+COPY ./gateway/requirements.txt /gateway/
+RUN pip install --no-cache-dir --upgrade -r /gateway/requirements.txt
 # Перенос проекта в образ
 COPY ./gateway/app /gateway/app
 

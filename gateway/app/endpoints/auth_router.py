@@ -10,7 +10,7 @@ keycloak_authorization_url = f"http://{host_ip}:8080/realms/master/protocol/open
 keycloak_token_url = f"http://{host_ip}:8080/realms/master/protocol/openid-connect/token"
 keycloak_user_info_url = f"http://{host_ip}:8080/realms/master/protocol/openid-connect/userinfo"
 keycloak_client_secret = "rZirLHpuGn1lp4nO8dad5WumKwLhzNbW"
-keycloak_redirect_uri = f"http://127.0.0.1:8000/auth/callback"
+keycloak_redirect_uri = f"http://158.160.14.173:8000/auth/callback"
 keycloak_logout_uri = f"http://{host_ip}:8080/realms/master/protocol/openid-connect/logout"
 
 auth_router = APIRouter(prefix='/auth', tags=['auth'])
@@ -21,8 +21,7 @@ logging.basicConfig()
 def get_user_role(request: Request):
     token = request.session.get('auth_token')
     headers = {"Authorization": f"Bearer {token}"}
-    user = {'role': 'admin', 'id': 'be25eff0-5ea9-40a7-b286-2470050cdb13', 'username': 'mmjax'}
-    return user
+    user = {'role': '', 'id': '', 'username': ''}
     try:
         roles = httpx.get(keycloak_user_info_url, headers=headers).json()
         if 'admin' in roles["realm_access"]["roles"]:
