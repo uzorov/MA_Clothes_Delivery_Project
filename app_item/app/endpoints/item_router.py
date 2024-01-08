@@ -60,7 +60,7 @@ def add_operation_result(span: Span, result: str) -> None:
 
 
 item_router = APIRouter(prefix='/item', tags=['Item'])
-target_service_url = "http://192.168.1.92:86"
+target_service_url = f"http://{settings.host_ip}:86"
 
 
 def make_request_to_target_service(item_id, size, count, price, name, user):

@@ -87,8 +87,8 @@ def get_metrics():
     )
 
 
-payment_service_url = "http://app_payment:82"
-printing_service_url = "http://app_printing:81"
+payment_service_url = f"http://{settings.host_ip}:82"
+printing_service_url = f"http://{settings.host_ip}:81"
 
 
 def make_request_to_payment_service(data):

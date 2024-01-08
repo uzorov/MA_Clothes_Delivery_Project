@@ -74,7 +74,7 @@ create_cart_count = prometheus_client.Counter(
     "Number of get requests"
 )
 
-target_service_url = "http://192.168.1.92:84"
+target_service_url = f"http://{settings.host_ip}:84"
 
 
 def make_request_to_target_service(data):

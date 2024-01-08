@@ -5,13 +5,13 @@ from starlette.responses import RedirectResponse, Response
 import logging
 
 
-host_ip = "192.168.1.92"
+host_ip = "158.160.14.173"
 keycloak_authorization_url = f"http://{host_ip}:8080/realms/master/protocol/openid-connect/auth"
 keycloak_token_url = f"http://{host_ip}:8080/realms/master/protocol/openid-connect/token"
 keycloak_user_info_url = f"http://{host_ip}:8080/realms/master/protocol/openid-connect/userinfo"
 keycloak_client_id = "gateway"
 keycloak_client_secret = "wHqxhPsAPsC1KobUqtekChy4hUasdzdN"
-keycloak_redirect_uri = f"http://127.0.0.1:82/auth/callback"
+keycloak_redirect_uri = f"http://{host_ip}:82/auth/callback"
 keycloak_logout_uri = f"http://{host_ip}:8080/realms/master/protocol/openid-connect/logout"
 
 auth_router = APIRouter(prefix='/auth', tags=['auth'])

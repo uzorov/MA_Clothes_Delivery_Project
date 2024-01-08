@@ -17,4 +17,4 @@ COPY ./app_item/alembic.ini /app_item/alembic.ini
 
 EXPOSE 83
 
-CMD ["/bin/sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 83"]
+CMD ["/bin/sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 158.160.14.173 --port 83"]

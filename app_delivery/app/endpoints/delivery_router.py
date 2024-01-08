@@ -10,6 +10,7 @@ import asyncio
 
 from opentelemetry import trace
 from opentelemetry.sdk.resources import Resource
+from app.settings import settings
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.sdk.trace.export import ConsoleSpanExporter
@@ -25,7 +26,7 @@ trace.set_tracer_provider(
   )
 )
 jaeger_exporter = JaegerExporter(
-  agent_host_name="localhost",
+  agent_host_name=settings.host_ip,
   agent_port=6831,
 )
 trace.get_tracer_provider().add_span_processor(
