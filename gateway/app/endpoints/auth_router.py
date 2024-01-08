@@ -64,8 +64,7 @@ def logout(request: Request):
 
 @auth_router.get("/callback")
 def callback(request: Request, token: str = Depends(_get_token)):
-    return token
-    # RedirectResponse(url=request.session.get('prev_url'))
+    return RedirectResponse(url=request.session.get('prev_url'))
 
 
 def get_token(code):
