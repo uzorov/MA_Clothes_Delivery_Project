@@ -10,7 +10,7 @@ from enum import Enum
 import logging
 
 host_ip = "158.160.14.173"
-auth_url = "http://158.160.14.173:8000/auth/login"
+auth_url = "http://bbaaj0q6vsmkrjslmt4i.containers.yandexcloud.net/auth/login"
 
 logging.basicConfig()
 
