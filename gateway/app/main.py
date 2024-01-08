@@ -3,8 +3,8 @@ from uuid import UUID
 from fastapi.responses import JSONResponse
 from starlette.middleware.sessions import SessionMiddleware
 import httpx
-from endpoints.auth_router import get_user_role
-from endpoints.auth_router import auth_router
+from app.endpoints.auth_router import get_user_role
+from app.endpoints.auth_router import auth_router
 from starlette.responses import RedirectResponse
 from enum import Enum
 import logging
