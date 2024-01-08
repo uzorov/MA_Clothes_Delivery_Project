@@ -10,7 +10,7 @@ keycloak_authorization_url = f"http://{host_ip}:8080/realms/master/protocol/open
 keycloak_token_url = f"http://{host_ip}:8080/realms/master/protocol/openid-connect/token"
 keycloak_user_info_url = f"http://{host_ip}:8080/realms/master/protocol/openid-connect/userinfo"
 keycloak_client_secret = "rZirLHpuGn1lp4nO8dad5WumKwLhzNbW"
-keycloak_redirect_uri = f"http://bbaaj0q6vsmkrjslmt4i.containers.yandexcloud.net/auth/callback"
+keycloak_redirect_uri = f"https://bbaaj0q6vsmkrjslmt4i.containers.yandexcloud.net/auth/callback"
 keycloak_logout_uri = f"http://{host_ip}:8080/realms/master/protocol/openid-connect/logout"
 
 auth_router = APIRouter(prefix='/auth', tags=['auth'])
