@@ -9,7 +9,7 @@ keycloak_client_id = "gateway"
 keycloak_authorization_url = f"http://{host_ip}:8080/realms/master/protocol/openid-connect/auth"
 keycloak_token_url = f"http://{host_ip}:8080/realms/master/protocol/openid-connect/token"
 keycloak_user_info_url = f"http://{host_ip}:8080/realms/master/protocol/openid-connect/userinfo"
-keycloak_client_secret = "VGnclHZpVKd0oBNiHVuOGcOR3MamxaOi"
+keycloak_client_secret = "rZirLHpuGn1lp4nO8dad5WumKwLhzNbW"
 keycloak_redirect_uri = f"http://127.0.0.1:8000/auth/callback"
 keycloak_logout_uri = f"http://{host_ip}:8080/realms/master/protocol/openid-connect/logout"
 
