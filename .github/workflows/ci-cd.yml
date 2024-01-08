@@ -2,7 +2,7 @@ name: CI/CD pipline
 
 on:
   push:
-    branches: [ "cicd" ]
+    branches: [ "gate" ]
 
 jobs:
 
@@ -638,3 +638,4 @@ jobs:
           container-name: ${{ secrets.YC_KEYCLOAK_CONTAINER_NAME }}
           folder-id: ${{ secrets.YC_FOLDER_ID }}
           revision-image-url: cr.yandex/${{ secrets.YC_REGISTRY_ID }}/keycloak:latest
+          revision-service-account-id: ${{ secrets.YC_SA_ID }}
