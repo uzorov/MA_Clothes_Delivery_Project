@@ -629,7 +629,7 @@ jobs:
   deploy-keycloak:
     name: KeyCloak deploy
     runs-on: ubuntu-latest
-    needs: [ build-and-push-app-keycloak-to-yc ]
+    needs: [ build-and-push-keycloak-to-yc ]
     steps:
       - name: Deploy serverless container
         uses: yc-actions/yc-sls-container-deploy@v1
