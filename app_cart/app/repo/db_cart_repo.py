@@ -6,18 +6,19 @@ import logging
 
 from fastapi import APIRouter, Depends, HTTPException, Body
 from app.database import get_db
-from app.models.cart import Cart
+from app.models.cart import Cart, CartStatuses
 from app.schemas.cart import Cart as DBCart
 import logging
 
 logging.basicConfig()
+
 
 class CartRepo():
     db: Session
 
     def __init__(self) -> None:
         self.db = next(get_db())
-    
+
     def _map_to_model(self, cart: DBCart) -> Cart:
         result = Cart.from_orm(cart)
         return result
@@ -32,8 +33,8 @@ class CartRepo():
         for c in self.db.query(DBCart).all():
             carts.append(self._map_to_model(c))
         return carts
-    
-    def get_cart(self, id:UUID) -> Cart:
+
+    def get_cart(self, id: UUID) -> Cart:
         cart = self.db \
             .query(DBCart) \
             .filter(DBCart.id == id) \
@@ -42,17 +43,14 @@ class CartRepo():
             raise KeyError
         return self._map_to_model(cart)
 
-    def get_cart_by_user(self, user_id: UUID) -> Cart:
-        print("Repo--------------------------------------------------------")
-        print(str(user_id))
+    def get_cart_by_user(self, user_id: UUID) -> None:
         cart = self.db \
             .query(DBCart) \
-            .filter(DBCart.user_id == user_id and DBCart.status == "CREATED") \
+            .filter((DBCart.user_id == user_id) & (DBCart.status == CartStatuses.CREATED)) \
             .first()
         if cart is None:
             return None
         return self._map_to_model(cart)
-
 
     def create_cart(self, cart: Cart) -> Cart:
         try:
@@ -63,12 +61,13 @@ class CartRepo():
         except:
             traceback.print_exc()
             raise KeyError
-    
-    def update_cart(self, cart:Cart) -> Cart:
+
+    def update_cart(self, cart: Cart) -> Cart:
         try:
             db_cart = self.db.query(DBCart).filter(DBCart.id == cart.id).first()
             db_cart.total = cart.total
             db_cart.items = cart.items
+            db_cart.status = cart.status
             self.db.commit()
             return self.db.query(DBCart).filter(DBCart.id == cart.id).first()
         except:

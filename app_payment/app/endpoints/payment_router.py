@@ -60,14 +60,28 @@ def add_operation_result(span: Span, result: str) -> None:
     span.set_attribute("custom.result", result)
 
 
+def user_staff_admin(role):
+    if role == "client" or role == "staff" or role == "admin":
+        return True
+    return False
+
+def staff_admin(role):
+    if role == "staff" or role == "admin":
+        return True
+    return False
+
 @payment_router.get('/')
-def get_all_payments(payment_service: PaymentService = Depends(PaymentService)) -> list[Payment]:
+def get_all_payments(payment_service: PaymentService = Depends(PaymentService), user: str = Header(...)) -> list[Payment]:
+    user = eval(user)
     with tracer.start_as_current_span("Get payments") as span:
         add_endpoint_info(span, "/")
         try:
-            result = payment_service.get_all_payments()
-            add_operation_result(span, "success")
-            return result
+            if user['id'] is not None:
+                if staff_admin(user['role']):
+                    result = payment_service.get_all_payments()
+                    add_operation_result(span, "success")
+                    return result
+                raise HTTPException(403)
         except Exception as e:
             add_operation_result(span, "failure")
             raise HTTPException(500, f'Internal Server Error: {str(e)}')
@@ -81,13 +95,14 @@ def get_users_payments(payment_service: PaymentService = Depends(PaymentService)
         add_endpoint_info(span, "/get-user-payments")
         try:
             if user['id'] is not None:
-                if user['role'] == "Viewer" or user['role'] == "Customer":
-                    result = payment_service.get_users_payments(user['id'])
+                if user_staff_admin(user['role']):
+                    result = payment_service.get_user_payments(user['id'])
                     add_operation_result(span, "success")
                     return result
+                raise HTTPException(403)
         except KeyError:
             add_operation_result(span, "failure")
-            raise HTTPException(404, f'Order with id={id} not found')
+            raise HTTPException(404, f'Order with user {user["id"]} not found')
 
 
 @payment_router.post('/')
@@ -109,7 +124,7 @@ def create_payment(
             add_operation_result(span, f'Payment with id={payment_info.id} already exists')
             raise HTTPException(400, f'Payment with id={payment_info.id} already exists')
 
-@payment_router.put('/update_payment')
+@payment_router.post('/update_payment')
 def update_payment(
         payment_info: CreatePaymentRequest,
         payment_service: PaymentService = Depends(PaymentService)
@@ -145,14 +160,19 @@ def process_payment(
 @payment_router.get('/{id}')
 def get_payment_by_id(
         id: UUID,
-        payment_service: PaymentService = Depends(PaymentService)
+        payment_service: PaymentService = Depends(PaymentService),
+        user: str = Header(...)
 ) -> Payment:
+    user = eval(user)
     with tracer.start_as_current_span("Create payment") as span:
         add_endpoint_info(span, "/{id}")
         try:
-            payment = payment_service.get_payment_by_id(id)
-            add_operation_result(span, "Successful")
-            return payment.dict()
+            if user['id'] is not None:
+                if staff_admin(user['role']):
+                    payment = payment_service.get_payment_by_id(id)
+                    add_operation_result(span, "Successful")
+                    return payment.dict()
+                raise HTTPException(403)
         except KeyError:
             add_operation_result(span, f'Payment with id={id} not found')
             raise HTTPException(404, f'Payment with id={id} not found')

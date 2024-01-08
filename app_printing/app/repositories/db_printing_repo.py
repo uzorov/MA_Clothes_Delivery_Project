@@ -36,7 +36,7 @@ class PrintingRepo():
             .first()
 
         if printing == None:
-            raise KeyError
+            raise None
         return self._map_to_model(printing)
 
     def create_printing(self, printing: Printing) -> Printing:

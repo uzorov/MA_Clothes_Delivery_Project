@@ -65,6 +65,16 @@ item_router = APIRouter(prefix='/item', tags=['Item'])
 target_service_url = "https://bba9bi2fk969n6lrbri8.containers.yandexcloud.net"
 
 
+def user_staff_admin(role):
+    if role == "client" or role == "staff" or role == "admin":
+        return True
+    return False
+
+def staff_admin(role):
+    if role == "staff" or role == "admin":
+        return True
+    return False
+
 def make_request_to_target_service(item_id, size, count, price, name, user):
     url = f"{target_service_url}/api/cart/"
     headers = {
@@ -78,13 +88,6 @@ def make_request_to_target_service(item_id, size, count, price, name, user):
         return response.status_code
     else:
         raise Exception(f"Error making request:{response.status_code}, {response.text}")
-
-
-# class dropdownChoices(str, Enum):
-#     xs = "xs"
-#     s = "s"
-#     m = "m"
-#     l = "l"
 
 
 @item_router.get('/')
@@ -114,13 +117,18 @@ def create_item(
         name: str,
         price: float,
         design: str,
-        item_service: ItemService = Depends(ItemService)) -> Item:
+        item_service: ItemService = Depends(ItemService),
+        user: str = Header(...)) -> Item:
+    user = eval(user)
     with tracer.start_as_current_span("Create item") as span:
         add_endpoint_info(span, "/ [POST]")
         try:
-            item = item_service.create_item(name, price, design)
-            add_operation_result(span, "success")
-            return item.dict()
+            if user['id'] is not None:
+                if staff_admin(user['role']):
+                    item = item_service.create_item(name, price, design)
+                    add_operation_result(span, "success")
+                    return item.dict()
+                raise HTTPException(403)
         except KeyError:
             add_operation_result(span, "failure: Cant create item")
             raise HTTPException(404, f'Cant create item')
@@ -134,14 +142,18 @@ def add_to_cart(
         item_service: ItemService = Depends(ItemService),
         user: str = Header(...),
 ) -> Item:
+    user = eval(user)
     with tracer.start_as_current_span("Add to cart") as span:
         add_endpoint_info(span, "/add_to_cart")
         try:
-            item = item_service.get_items_by_id(item_id)
-            make_request_to_target_service(item_id, size, count, item.price, item.name, user)
-            add_operation_result(span, "success")
-            return item
-        except KeyError:
+            if user['id'] is not None:
+                if user_staff_admin(user['role']):
+                    item = item_service.get_items_by_id(item_id)
+                    make_request_to_target_service(item_id, size, count, item.price, item.name, user)
+                    add_operation_result(span, "success")
+                    return item
+                raise HTTPException(403)
+        except:
             add_operation_result(span, "failure: Cant add to cart item")
             raise HTTPException(404, f'Cant add to cart item')
 
@@ -167,7 +179,7 @@ def update_design_image(
             raise HTTPException(400, f'Invalid image: {new_image}')
 
 
-@item_router.delete('/delete-design/{id}')
+@item_router.delete('/delete_design/{id}')
 def delete_design(
         id: UUID,
         design_service: DesignService = Depends(DesignService)
@@ -181,3 +193,22 @@ def delete_design(
         except KeyError:
             add_operation_result(span, "failure")
             raise HTTPException(404, f'Design with id={id} not found')
+
+
+@item_router.delete('/delete_item/{id}')
+def delete_item(id: UUID,
+                item_service: ItemService = Depends(ItemService),
+                user: str = Header(...),) -> Item:
+    user = eval(user)
+    with tracer.start_as_current_span("Delete design") as span:
+        add_endpoint_info(span, "/delete-design/{id}")
+        try:
+            if user['id'] is not None:
+                if staff_admin(user['role']):
+                    item = item_service.delete_item(id)
+                    add_operation_result(span, "success")
+                    return item.dict()
+                raise HTTPException(403)
+        except:
+            add_operation_result(span, "failure")
+            raise HTTPException(404, f'item with id={id} not found')

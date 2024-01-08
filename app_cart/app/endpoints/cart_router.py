@@ -74,13 +74,21 @@ create_cart_count = prometheus_client.Counter(
     "Number of get requests"
 )
 
+def user_staff_admin(role):
+    if role == "client" or role == "staff" or role == "admin":
+        return True
+    return False
+
+def staff_admin(role):
+    if role == "staff" or role == "admin":
+        return True
+    return False
+
 #request to order service
 target_service_url = "https://bbao8dmhdaak232edmks.containers.yandexcloud.net"
 
 
 def make_request_to_target_service(data):
-    print("_________________MAKE REQ__________________")
-    print(str(data))
     url = f"{target_service_url}/api/order/"
     json_data = {'user_id': str(data['user_id']), 'cart': str(data['cart']), 'price': str(data['price'])}
     with httpx.Client(timeout=30) as client:
@@ -99,54 +107,56 @@ def get_metrics():
     )
 
 
-@cart_router.get('/')
-def get_carts(cart_service: CartService = Depends(CartService)) -> list[Cart]:
+@cart_router.get('/all')
+def get_carts(cart_service: CartService = Depends(CartService), user: str = Header(...)) -> list[Cart]:
+    user = eval(user)
     with tracer.start_as_current_span("Get carts") as span:
         add_endpoint_info(span, "/")
         try:
-            add_operation_result(span, "success")
-            get_cart_count.inc(1)
-            result = cart_service.get_carts()
-            return result
+            if user['id'] is not None:
+                if staff_admin(user['role']):
+                    add_operation_result(span, "success")
+                    get_cart_count.inc(1)
+                    result = cart_service.get_carts()
+                    return result
+                raise HTTPException(403)
         except Exception as e:
             add_operation_result(span, "failure")
             raise HTTPException(500, f'Internal Server Error: {str(e)}')
 
 
-@cart_router.get('/{id}}')
+@cart_router.get('/')
 def get_cart_by_id(cart_service: CartService = Depends(CartService), user: str = Header(...)) -> Cart:
     with tracer.start_as_current_span("Get cart by id") as span:
         user = eval(user)
         add_endpoint_info(span, "/{id}")
         try:
             if user['id'] is not None:
-                if user['role'] == "Viewer" or user['role'] == "Customer":
+                if user_staff_admin(user['role']):
                     get_cart_by_id_count.inc(1)
                     add_operation_result(span, "success")
                     return cart_service.get_cart_by_user(user['id'])
-        except KeyError:
+                raise HTTPException(403)
+        except:
             add_operation_result(span, "failure")
-            raise HTTPException(404, f'Cart with id={id} not found')
+            raise HTTPException(404, f'No cart')
 
 
 @cart_router.post('/')
 def create_or_update_cart(item: Item, cart_service: CartService = Depends(CartService), user: str = Header(...)) -> Cart:
     user = eval(user)
-    print('вывод item ______________________________________')
-    print(item)
     try:
         if user['id'] is not None:
-            print('1')
-            if user['role'] == "Viewer" or user['role'] == "Customer":
-                print(cart_service.get_cart_by_user(user['id']))
+            if user_staff_admin(user['role']):
+                print('uaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+                print(cart_service.get_cart_by_user(user['id']), 'sss')
                 if cart_service.get_cart_by_user(user['id']):
-                    print('3')
                     create_cart_count.inc(1)
                     cart = cart_service.update_cart(user['id'], item)
                     return cart.__dict__
-                print('4')
                 cart = cart_service.create_cart(item, user['id'])
                 return cart.dict()
+            raise HTTPException(403)
     except Exception as e:
         raise HTTPException(404, f'{e}')
 
@@ -183,23 +193,24 @@ def create_or_update_cart(item: Item, cart_service: CartService = Depends(CartSe
 #         raise HTTPException(404, f'Cart with {id} not found')
 
 @cart_router.post('/create_order')
-def create_order(user: UUID, cart_service: CartService = Depends(CartService)) -> Cart:
+def create_order(cart_service: CartService = Depends(CartService), user: str = Header(...)) -> Cart:
+    user = eval(user)
     with tracer.start_as_current_span("Crate order") as span:
         add_endpoint_info(span, "/create_order")
         try:
-
-            print("Router--------------------------------------------------------")
-            print(user)
-            cart = cart_service.get_cart_by_user(user)
-            data = {'user_id': str(user), 'cart': str(cart.id), 'price': str(cart.total)}
-            try:
-                make_request_to_target_service(data)
-            except KeyError:
-                add_operation_result(span, "failure")
-                raise HTTPException(404, f'Cart make request')
-            cart = cart_service.set_cart_status(user)
-            add_operation_result(span, "success")
-            return cart.__dict__
-        except KeyError:
+            if user['id'] is not None:
+                if user_staff_admin(user['role']):
+                    cart = cart_service.get_cart_by_user(user['id'])
+                    data = {'user_id': user['id'], 'cart': str(cart.id), 'price': str(cart.total)}
+                    try:
+                        make_request_to_target_service(data)
+                    except KeyError:
+                        add_operation_result(span, "failure")
+                        raise HTTPException(404, f'Cart make request')
+                    cart = cart_service.set_cart_status(user['id'])
+                    add_operation_result(span, "success")
+                    return cart.__dict__
+                raise HTTPException(403)
+        except:
             add_operation_result(span, "failure")
-            raise HTTPException(404, f'Cart with user {user} not found')
+            raise HTTPException(404, f'Cart with user {user["id"]} not found')

@@ -14,12 +14,12 @@ class OrderService():
 
     def get_user_orders(self, user_id: UUID) -> list[Order]:
         return self.order_repo.get_user_orders(user_id)
-    
+
     def get_user_order_by_id(self, order_id: UUID, user_id: UUID):
         return self.order_repo.get_user_order_by_id(order_id, user_id)
 
     def create_order(self, cart: UUID, price: float, user_id: UUID) -> Order:
-        order = Order(id=uuid4(), cart=cart, discount=1.0, status=OrderStatuses.CREATED, price=price, user_id=user_id)
+        order = Order(id=uuid4(), cart=cart, discount=None, status=OrderStatuses.CREATED, price=price, user_id=user_id)
         return self.order_repo.create_order(order)
 
     def paid_order(self, id: UUID) -> Order:
@@ -31,7 +31,9 @@ class OrderService():
 
     def set_discount(self, id: UUID, discount: float) -> Order:
         order = self.order_repo.get_order_by_id(id)
-        new_price = order.price * discount
+        print(str(discount))
+        print(str(1 - discount))
+        new_price = order.price * (1 - discount)
         if order.status == OrderStatuses.CREATED:
             order.discount = discount
             order.price = new_price
@@ -44,6 +46,7 @@ class OrderService():
             raise ValueError
         order.status = OrderStatuses.DONE
         return self.order_repo.set_status(order)
+
     
     
         

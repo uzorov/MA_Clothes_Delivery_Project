@@ -28,3 +28,6 @@ class ItemService():
             name = 'Свой дизайн'
         item = Item(id=uuid4(), name=name, price=price, design=design)
         return self.item_repo.create_item(item)
+
+    def delete_item(self, id: UUID):
+        return self.item_repo.delete_item(id)

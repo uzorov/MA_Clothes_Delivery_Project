@@ -17,6 +17,9 @@ class DeliveryService():
     def get_deliveries(self) -> list[Delivery]:
         return self.delivery_repo.get_deliveries()
 
+    def get_delivery_by_id(self, id: UUID) -> list[Delivery]:
+        return self.delivery_repo.get_delivery_by_id(id)
+
     def create_delivery(self, id: UUID) -> Delivery:  # , date: datetime, address: str
         delivery = Delivery(
             id=id,
@@ -65,3 +68,4 @@ class DeliveryService():
 
         delivery.type = DeliveryTypes.DELIVERY
         return self.delivery_repo.set_type(delivery)
+

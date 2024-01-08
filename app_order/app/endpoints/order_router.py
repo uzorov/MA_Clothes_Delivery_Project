@@ -91,6 +91,17 @@ payment_service_url = "https://bbagsn9ksci9tifcinu9.containers.yandexcloud.net"
 printing_service_url = "https://bbaif5o8621h44fjp96q.containers.yandexcloud.net"
 
 
+def user_staff_admin(role):
+    if role == "client" or role == "staff" or role == "admin":
+        return True
+    return False
+
+def staff_admin(role):
+    if role == "staff" or role == "admin":
+        return True
+    return False
+
+
 def make_request_to_payment_service(data):
     print("Payment req")
     data = {'sum': str(data['price']), 'order_id': str(data['id']), 'user_id': str(data['user_id'])}
@@ -122,7 +133,7 @@ def get_user_orders(request: Request, order_service: OrderService = Depends(Orde
         add_endpoint_info(span, "/")
         user = eval(user)
         if user['id'] is not None:
-            if user['role'] == "Viewer" or user['role'] == "Customer":
+            if user_staff_admin(user['role']):
                 add_operation_result(span, "success")
                 get_orders_count.inc(1)
                 return order_service.get_user_orders(UUID(user['id']))
@@ -138,10 +149,11 @@ def get_order_by_id(id: UUID, request: Request, order_service: OrderService = De
         add_endpoint_info(span, "/{id}")
         try:
             if user['id'] is not None:
-                if user['role'] == "Viewer" or user['role'] == "Customer":
+                if user_staff_admin(user['role']):
                     get_order_by_id_count.inc(1)
                     add_operation_result(span, "success")
                     return order_service.get_user_order_by_id(id, user['id'])
+                raise HTTPException(403)
         except KeyError:
             add_operation_result(span, "failure")
             raise HTTPException(404, f'Order with id={id} not found')
