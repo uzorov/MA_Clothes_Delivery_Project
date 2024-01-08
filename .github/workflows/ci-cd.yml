@@ -429,6 +429,49 @@ jobs:
         run: |
           docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/app_promocode_service:latest
 
+    #gateway building____________________________________________________________________
+  build-and-push-gateway-to-yc:
+    name: Build and push promocode service image to YandexCloud Registry
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build docker image
+        run: |
+          docker build . -f ./gateway/Dockerfile --tag cr.yandex/${{ secrets.YC_REGISTRY_ID }}/gateway:latest
+
+      - name: Login to YC Registry
+        uses: docker/login-action@v3.0.0
+        with:
+          registry: cr.yandex
+          username: json_key
+          password: ${{ secrets.YC_KEYS }}
+
+      - name: Push tag YC Registry
+        run: |
+          docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/gateway:latest
+
+  build-and-push-keycloak-to-yc:
+    name: Build and push KeyCloak image to YandexCloud Registry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build docker image
+        run: |
+          docker build . -f ./keycloak/Dockerfile -t cr.yandex/${{ secrets.YC_REGISTRY_ID }}/keycloak:latest
+
+      - name: Login to YC Registry
+        uses: docker/login-action@v3.0.0
+        with:
+          registry: cr.yandex
+          username: json_key
+          password: ${{ secrets.YC_KEYS }}
+
+      - name: Push tag to YC Registry
+        run: |
+          docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/keycloak:latest
 
   ######################################################################################
   ######################################################################################
@@ -564,3 +607,34 @@ jobs:
           revision-env: |
             AMQP_URL=${{ secrets.ENV_AMQP_URL }}
             POSTGRES_URL_PROMOCODE=${{ secrets.POSTGRES_URL_PROMOCODE }}
+
+  #######################################################################################################
+
+  deploy-gateway:
+    name: Gateway deploy
+    runs-on: ubuntu-latest
+    needs: [ build-and-push-gateway-to-yc]
+    steps:
+      - name: Deploy serverless container
+        uses: yc-actions/yc-sls-container-deploy@v1
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_KEYS }}
+          container-name: ${{ secrets.YC_GATEWAY_CONTAINER_NAME }}
+          folder-id: ${{ secrets.YC_FOLDER_ID }}
+          revision-image-url: cr.yandex/${{ secrets.YC_REGISTRY_ID }}/gateway:latest
+          revision-service-account-id: ${{ secrets.YC_SA_ID }}
+
+  #######################################################################################################
+
+  deploy-keycloak:
+    name: KeyCloak deploy
+    runs-on: ubuntu-latest
+    needs: [ build-and-push-app-keycloak-to-yc ]
+    steps:
+      - name: Deploy serverless container
+        uses: yc-actions/yc-sls-container-deploy@v1
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_KEYS }}
+          container-name: ${{ secrets.YC_KEYCLOAK_CONTAINER_NAME }}
+          folder-id: ${{ secrets.YC_FOLDER_ID }}
+          revision-image-url: cr.yandex/${{ secrets.YC_REGISTRY_ID }}/keycloak:latest
