@@ -9,7 +9,7 @@ from starlette.responses import RedirectResponse
 from enum import Enum
 import logging
 
-host_ip = "192.168.1.92"
+host_ip = "158.160.14.173"
 auth_url = "http://127.0.0.1:8000/auth/login"
 
 logging.basicConfig()
@@ -21,13 +21,13 @@ app.add_middleware(SessionMiddleware, secret_key='asas12334sadfdsf')
 app.include_router(auth_router)
 
 MICROSERVICES = {
-    "order": "http://192.168.1.92:84/api",
-    "promocode": "http://192.168.1.92:85/api",
-    "item": "http://192.168.1.92:83/api",
-    "cart": "http://192.168.1.92:86/api",
-    "printing": "http://192.168.1.92:81/api",
-    "payment": "http://192.168.1.92:82/api",
-    "delivery": "http://192.168.1.92:80/api"
+    "order": "https://bbao8dmhdaak232edmks.containers.yandexcloud.net/api",
+    "promocode": "https://bbaub0la0nct70lluck2.containers.yandexcloud.net/api",
+    "item": "https://bba077u52m21tsil0q5f.containers.yandexcloud.net/api",
+    "cart": "https://bba9bi2fk969n6lrbri8.containers.yandexcloud.net/api",
+    "printing": "https://bbaif5o8621h44fjp96q.containers.yandexcloud.net/api",
+    "payment": "https://bbagsn9ksci9tifcinu9.containers.yandexcloud.net/api",
+    "delivery": "https://bbapu2gipilstlsge2kn.containers.yandexcloud.net/api"
 }
 
 

@@ -4,7 +4,7 @@ from starlette.requests import Request
 from starlette.responses import RedirectResponse, Response
 import logging
 
-host_ip = "192.168.1.92"
+host_ip = "158.160.14.173"
 keycloak_client_id = "gateway"
 keycloak_authorization_url = f"http://{host_ip}:8080/realms/master/protocol/openid-connect/auth"
 keycloak_token_url = f"http://{host_ip}:8080/realms/master/protocol/openid-connect/token"

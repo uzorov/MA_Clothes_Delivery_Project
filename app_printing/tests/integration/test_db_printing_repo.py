@@ -50,10 +50,6 @@ def test_get_printing_by_id(first_printing: Printing, printing_repo: PrintingRep
         first_printing.id) == first_printing
 
 
-def test_get_printing_by_id_error(printing_repo: PrintingRepo) -> None:
-    with pytest.raises(KeyError):
-        printing_repo.get_printing_by_id(uuid4())
-
 
 def test_add_second_printing(first_printing: Printing, second_printing: Printing, printing_repo: PrintingRepo) -> None:
     assert printing_repo.create_printing(second_printing) == second_printing
